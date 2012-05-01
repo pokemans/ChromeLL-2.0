@@ -1,0 +1,57 @@
+<html>
+<head>
+<script type="text/javascript" src="App/src/vars.json"></script>
+<script type="text/javascript">
+var board = Array();
+var cfg = JSON.parse(localStorage['ChromeLL-Config']);
+function buildContextMenu()
+{
+    board = null;
+    board = Array();
+    var id;
+    var menu = chrome.contextMenus.create({"title": "ETI", "contexts":["page"] });
+    for(var i in boards){
+        if(boards[i] != boards[0]){
+            chrome.contextMenus.create({"type":"separator", "parentId":menu});
+        }
+        for(var j in boards[i]){
+            id = chrome.contextMenus.create({"title": j, "parentId": menu, "onclick":handleContext});
+            board[id] = boards[i][j];
+        }
+    }
+}
+function handleContext(info){
+    if(board[info.menuItemId] % 1 === 0){
+        chrome.tabs.create({"url":"https://boards.endoftheinter.net/showtopics.php?board=" + board[info.menuItemId]});
+    }else{
+        var url = board[info.menuItemId].replace("%extension%", chrome.extension.getURL("/"));
+        chrome.tabs.create({"url":url});
+    }
+}
+buildContextMenu();
+
+function handleHttpsRedirect(dest){
+    return { redirectUrl: dest.url.replace(/^http/i, "https")}
+}
+
+if(cfg.force_https){
+    chrome.webRequest.onBeforeRequest.addListener(function(dest){
+        return { redirectUrl: dest.url.replace(/^http/i, "https")}
+    },{"urls":["http://*.endoftheinter.net/*"]}, ['blocking']);
+}
+
+chrome.extension.onRequest.addListener(
+    function(request, sender, sendResponse) {
+        switch(request.need){
+            case "config":
+                sendResponse({"data":JSON.parse(localStorage['ChromeLL-Config'])});
+                cfg = JSON.parse(localStorage['ChromeLL-Config']);
+                break;
+            defaiult:
+                console.log("Error in request listener - undefined parameter?");
+                break;
+        }
+    });
+</script>
+</head>
+</html>  

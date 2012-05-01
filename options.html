@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans&v1' rel='stylesheet' type='text/css'>
+<title>ChromeLL Options</title>
+<style type="text/css">
+
+body {
+  cursor: default;
+  font-family: Open Sans, sans-serif;
+  font-size: 12px;
+  margin: 0;
+}
+
+p {
+  line-height: 22px;
+}
+
+h1 {
+  -webkit-user-select: none;
+  color: rgb(48, 57, 66);
+  font-size: 18px;
+  font-weight: normal;
+  margin-top: 1em;
+}
+
+a {
+  color: #1155cc;
+  text-decoration: underline;
+}
+
+a:active {
+  color: #052577;
+}
+
+
+/* TEXT */
+input[type='password'],
+input[type='text'],
+input[type='url'],
+input:not([type]) {
+  border: 1px solid #aaa;
+  border-radius: 2px;
+  font-size: inherit;
+  padding: 3px;
+}
+
+input[type='text']:disabled {
+  color: #888;
+}
+
+/* Elements that need to be LTR even in an RTL context, but should align
+ * right. (Namely, URLs, search engine names, etc.)
+ */
+html[dir='rtl'] .weakrtl {
+  direction: ltr;
+  text-align: right;
+}
+
+/* Input fields in search engine table need to be weak-rtl. Since those input
+ * fields are generated for all cr.ListItem elements (and we only want weakrtl
+ * on some), the class needs to be on the enclosing div.
+ */
+html[dir='rtl'] div.weakrtl input {
+  direction: ltr;
+  text-align: right;
+}
+
+html[dir='rtl'] .favicon-cell.weakrtl {
+  -webkit-padding-end: 22px;
+  -webkit-padding-start: 0;
+}
+
+/* weakrtl for selection drop downs needs to account for the fact that
+ * Webkit does not honor the text-align attribute for the select element.
+ * (See Webkit bug #40216)
+ */
+html[dir='rtl'] select.weakrtl {
+  direction: rtl;
+}
+
+html[dir='rtl'] select.weakrtl option {
+  direction: ltr;
+}
+
+/* WebKit does not honor alignment for text specified via placeholder attribute.
+ * This CSS is a workaround. Please remove once WebKit bug is fixed.
+ * https://bugs.webkit.org/show_bug.cgi?id=63367
+ */
+html[dir='rtl'] input.weakrtl::-webkit-input-placeholder,
+html[dir='rtl'] .weakrtl input::-webkit-input-placeholder {
+  direction: rtl;
+}
+ 
+.footer {
+  height:24px;
+}
+</style> 
+<style>body {
+  cursor: default;
+  font-size: 12px;
+}
+ 
+a:link {
+  color: rgb(63, 110, 194);
+}
+ 
+a:active {
+  color: rgb(37, 64, 113);
+}
+
+h1 {
+  -webkit-user-select: none;
+  color: rgb(48, 57, 66);
+  font-size: 18px;
+  font-weight: normal;
+  margin-top: 1em;
+}
+ 
+.title {
+  -webkit-margin-before: 18px;
+  -webkit-margin-start: 23px;
+  color: rgb(92, 97, 102);
+}
+ 
+#main-content {
+  display: -webkit-box;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+ 
+.frozen,
+.subpage-sheet-container.frozen {
+  position: fixed;
+}
+ 
+#search-field {
+  font-size: inherit;
+  margin: 0;
+}
+ 
+.overlay {
+  -webkit-box-align: center;
+  -webkit-box-pack: center;
+  -webkit-transition: 0.25s opacity;
+  background: -webkit-radial-gradient(rgba(127, 127, 127, 0.5),
+                                      rgba(127, 127, 127, 0.5) 35%,
+                                      rgba(0, 0, 0, 0.7));
+  bottom: 0;
+  display: -webkit-box;
+  left: 0;
+  padding: 20px;
+  padding-bottom: 130px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+ 
+.raw-button,
+.raw-button:hover,
+.raw-button:active {
+  -webkit-box-shadow: none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  min-width: 0;
+  padding: 1px 6px;
+}
+
+hr {
+	height: 1px;
+	padding: 0px;
+	
+	border: none;
+	background-color: #EEE;
+}
+
+div.notice {
+	margin: 5px;
+	margin-top: 8px;
+	
+	font-size: 15px;
+	font-weight: bold;
+}
+ 
+.close-subpage {
+  background-image: url('chrome://theme/IDR_CLOSE_BAR');
+  height: 16px;
+  min-width: 0;
+  position: relative;
+  top: 16px;
+  width: 16px;
+}
+ 
+.close-subpage:hover {
+  background-image: url('chrome://theme/IDR_CLOSE_BAR_H');
+}
+ 
+.close-subpage:active {
+  background-image: url('chrome://theme/IDR_CLOSE_BAR_P');
+}
+ 
+html[dir='ltr'] .close-subpage {
+  float: right;
+  right: 20px;
+}
+ 
+html[dir='rtl'] .close-subpage {
+  float: left;
+  left: 20px;
+}
+ 
+html.hide-menu .close-subpage {
+  display: none
+}
+ 
+.content-area {
+  padding: 10px 15px 5px 15px;
+}
+ 
+.action-area {
+  -webkit-box-align: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: end;
+  border-top: 1px solid rgba(188, 193, 208, .5);
+  display: -webkit-box;
+  padding: 12px;
+}
+ 
+html[dir='rtl'] .action-area {
+  left: 0;
+}
+ 
+.action-area-right {
+  display: -webkit-box;
+}
+ 
+.button-strip {
+  -webkit-box-orient: horizontal;
+  display: -webkit-box;
+}
+ 
+.bottom-strip {
+  padding: 12px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  border-top: none;
+}
+ 
+html[toolkit=views] .button-strip {
+  -webkit-box-direction: reverse;
+}
+ 
+.button-strip > button {
+  -webkit-margin-start: 10px;
+  display: block;
+}
+ 
+.overlay .page {
+  -webkit-box-shadow: 0px 5px 80px #505050;
+  background: white;
+  border: 1px solid rgb(188, 193, 208);
+  border-radius: 2px;
+  min-width: 400px;
+  padding: 0;
+  position: relative;
+}
+ 
+#navbar {
+  margin: 0;
+}
+ 
+#navbar-container {
+  background: #fff;
+  position: fixed;
+  bottom: 0;
+  /* We set both left and right for the sake of RTL. */
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 150px;
+  z-index: 2;
+}
+ 
+html[dir='rtl'] #navbar-container {
+  background: -webkit-linear-gradient(rgba(234, 238, 243, 0), #EAEEF3),
+              -webkit-linear-gradient(right, #EAEEF3, #EAEEF3 97%, #D3D7DB);
+}
+ 
+html.hide-menu #navbar-container {
+  display: none;
+}
+ 
+#navbar-container > ul {
+  -webkit-user-select: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+ 
+li.navbar-item {
+  -webkit-border-start: 6px solid white;
+  -webkit-padding-start: 18px;
+  color: #999;
+  cursor: pointer;
+  line-height: 17px;
+  margin: 5px 0;
+  text-transform: uppercase;
+}
+
+li.navbar-item:hover {
+  color: #777;
+}
+ 
+.navbar-item:focus {
+  border-bottom: 1px solid #8faad9;
+  border-top: 1px solid #8faad9;
+}
+ 
+li.navbar-item-selected {
+  -webkit-border-start-color: rgb(78, 87, 100);
+  color: rgb(70, 78, 90);
+}
+
+
+ 
+.subpage-sheet .page h1 {
+  margin-bottom: 10px;
+}
+
+div.page section:last-child {
+  border-bottom: none;
+}
+ 
+div.page > h3 {
+  font-size: 105%;
+  font-weight: bold;
+  margin: 20px 0 10px 0;
+}
+
+.page list {
+  /* Min height is a multiple of the list item height (32) */
+  min-height: 192px;
+}
+ 
+section {
+  -webkit-box-orient: horizontal;
+  border-bottom: 1px solid #eeeeee;
+  display: -webkit-box;
+  margin-top: 17px;
+  padding-bottom: 20px;
+}
+ 
+div.page section:last-child {
+  border-bottom: none;
+}
+ 
+div.page > h3 {
+  font-size: 105%;
+  font-weight: bold;
+  margin: 20px 0 10px 0;
+}
+ 
+section > h3 {
+  font-size: 105%;
+  font-weight: bold;
+  margin: 0;
+  vertical-align: middle;
+  width: 140px;
+}
+ 
+section > div:only-of-type {
+  -webkit-box-flex: 1;
+}
+ 
+.overlay .page h1 {
+  background: -webkit-linear-gradient(white, #F8F8F8);
+  border-bottom: 1px solid rgba(188, 193, 208, .5);
+  font-size: 105%;
+  font-weight: bold;
+  padding: 10px 15px 8px 15px;
+}
+
+#mainview {
+  -webkit-box-align: stretch;
+  -webkit-padding-start: 150px;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+
+#toplevel-page-container {
+  box-sizing: border-box;
+  max-width: 888px;
+  min-width: 600px;
+  padding: 0 24px;
+}
+/* This will 'disable' the label associated with any input whose next sibling is
+ * the span containing the label (usually a checkbox or radio).
+ */
+label > input[disabled] ~ span {
+  color: #888;
+}
+
+label > input[type="checkbox"]:hover, label {
+	cursor: hand;
+}
+
+div.checkbox,
+div.radio {
+  margin: 5px 0;
+}
+
+input[type=radio] ~ span,
+input[type=checkbox] ~ span {
+  color: #444;
+}
+
+li.note {
+	font-size: 12px;
+	padding: 10px;
+	bottom: 0px;
+	position: absolute;
+	text-align: right;
+	
+}
+
+div.hidden {
+	display: none;
+}
+
+ul.boardlist {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+	
+	overflow: hidden;
+	
+	width: 80%;
+	
+	border-bottom: 1px solid #ddd;
+}
+
+ul.boardlist:hover {
+	cursor: hand;
+	
+	background-color: #bbcee9;
+	
+	border-bottom: 1px solid #8faad9;
+	border-top: 1px solid #8faad9;
+	
+	margin-top: -1px;
+}
+
+ul.boardlist:last-child {
+	border-bottom: none;
+}
+
+ul.boardlist:first-child {
+	border-top: none;
+}
+
+ul.boardlist:nth-of-type(even)
+{
+}
+
+ul.boardlist > li {
+	float: left;
+	
+	padding: 6px;
+	
+}
+
+ul.boardlist > li:nth-child(2) {
+	padding-left: 10px;
+}
+
+ul.boardlist:nth-child(odd) {
+	
+}
+
+ul.boardlist > li:first-child {
+	min-width: 40px;
+		
+	text-align: center;
+	
+	cursor: default!important;
+	width: 50px;
+	
+	background-color: #efefef;
+}
+
+ul.boardlist > li:last-child {
+	width: 50px;
+	
+	background-color: #efefef;
+	
+	float: right;
+	
+	text-align: center;
+}
+
+ul.boardlist:hover > li {
+	background-color: #bbcee9;
+}
+
+ul.boardlist:hover > li:nth-child(2) {
+	font-weight: bold;
+}
+
+ul.info {
+	font-weight: bold;
+	
+	background-color: #fff!important;
+}
+
+ul.info > li {
+	background-color: #fff!important;
+}
+
+ul.info:hover {
+	border-bottom: 1px solid #ddd;
+	cursor: default!important;
+}
+
+li.Yes {
+	font-weight: bold!important;
+	background-color: #c3f2c3!important;
+}
+
+ul.boardlist:hover > li.Yes {
+	background-color: #bbcee9!important;
+}
+
+span.desc {
+	font-style: italic;
+	font-size: x-small;
+}
+</style>
+<link rel="stylesheet" href="Style/css/config/button.css">
+<link rel="stylesheet" href="Style/css/config/checkbox.css">
+<link rel="stylesheet" href="Style/css/config/select.css">
+<script type="text/javascript" src="App/Lib/Ext/jquery.js"></script>
+<script type="text/javascript" src="App/Lib/Ext/jqUi.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.options_navigation_link').click(function() {
+		toLink = $(this).attr('id').split('_link')[0];
+		
+		selectedPage = $('.navbar-item-selected').attr("id").split('_link')[0];
+		
+		if( toLink == selectedPage ) {
+			// Already on the page, clicking does not refresh the page!
+			return true;
+		}
+		
+		$('#' + selectedPage + '_link').removeClass("navbar-item-selected");
+		$('#' + toLink + '_link').addClass("navbar-item-selected");
+		
+		$('#' + selectedPage + '_page').removeClass("shown").addClass("hidden");
+		$('#' + toLink + '_page').removeClass("hidden").addClass("shown");
+		
+		if( toLink == "supersecretabout" ) {
+			$('body').css("background-color", "#000");
+		} else {
+			$('body').css("background-color", "transparent");
+		}
+	});
+    // restore config settings
+    if(localStorage['ChromeLL-Config'] == '' || localStorage['ChromeLL-Config'] == undefined){
+        console.log("Blank Config. Rebuilding");
+    }else{
+        console.log('loading config');
+        var config = JSON.parse(localStorage['ChromeLL-Config']);
+        var checkboxes = $(":checkbox");
+        for(var i in checkboxes){
+            checkboxes[i].checked = config[checkboxes[i].id];
+        }
+    }
+    // show version
+    var app = chrome.app.getDetails();
+    document.getElementById('version').innerText = app.version;
+});
+$(document).change(function(){
+    var saveString = { };
+    inputs = $(":checkbox");
+    for(var i in inputs){
+        saveString[inputs[i].id] = inputs[i].checked;
+    }
+    localStorage['ChromeLL-Config'] = JSON.stringify(saveString);
+});
+</script>
+<body>
+<div class="header"></div>
+<div id="main-content">
+	<div id="navbar-container">
+		<h1 class="title">ChromeLL</h1>
+		
+		<ul id="navbar">
+			<li class="navbar-item navbar-item-selected options_navigation_link" id="general_link">General</li>
+			<li class="navbar-item options_navigation_link" id="topiclist_link">Topic List</li>
+			<li class="navbar-item options_navigation_link" id="messagelist_link">Message List</li>
+			<li class="navbar-item options_navigation_link" id="profile_link">Profile</li>
+			<br />
+            <li class="navbar-item options_navigation_link" id="about_link">About</li>
+			<li class="note"><strong>Version:</strong> <span id="version"></span></li>
+		</ul>
+	</div>
+	
+	<div id="mainview">
+		<div id="mainview-content">
+			<div id="toplevel-page-container">			
+				<!-- BEGIN GENERAL PAGE -->
+				<div class="page shown" id="general_page">
+					<h1>General</h1>
+					<section>
+						<h3>UI</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="float_userbar" />
+									<span>Keep the Userbar + Menubar at the top of the screen</span>
+								</label>
+							</div>
+                
+						</div>
+					</section>
+					
+					<section>
+						<h3>Security</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="force_https" />
+									<span>Force an HTTPS connection</span>
+								</label>							
+							</div>
+							
+						</div>
+					</section>
+                    
+                    <section>
+						<h3>User Highlighting</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="enable_user_highlight" />
+									<span>Highlight users listed below</span>
+								</label>
+                                <br />
+                                <div style="font-size: small!important; margin-left: 17px; margin-top: -10px;">
+									<div class="columns" style="overflow: hidden;">
+										<div style="float: left; margin-right: 20px;">
+											Username:<br />
+											<input type="text" style="width: 100px;" name="user_highlight_username" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											Background:<br />
+											<input type="text" style="width: 70px;" name="user_highlight_headerbackground" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											Text:<br />
+											<input type="text" style="width: 70px;" name="user_highlight_headercolor" />
+										</div>
+									</div>
+								</div>
+                                <div style="font-size: small!important; margin-left: 17px">
+                                    <div class="columns" style="overflow: hidden;">
+										<div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 100px;" name="user_highlight_username" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" name="user_highlight_headerbackground" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" name="user_highlight_headercolor" />
+										</div>
+									</div>
+                                
+								</div>
+							</div>
+						</div>
+					</section>
+					
+				</div>
+				<!-- END GENERAL PAGE  -->
+				
+				<!-- END MENU PAGE  -->
+				
+				<!-- BEGIN ENHANCEMENT PAGE -->
+				<div class="page hidden" id="topiclist_page">
+					<h1>Topic List Enhancements</h1>
+					<section>
+						<h3>Page Jump Buttons</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="page_jump_buttons" />
+									<span>Enable page jump buttons</span>
+								</label>
+                            </div>
+						</div>
+					</section>
+					
+				</div>
+				<!-- END ENHANCEMENT PAGE -->
+				
+				<!-- BEGIN QUICK REPLY PAGE -->
+				<div class="page hidden" id="messagelist_page">
+					<h1>Message List Enhancements</h1>
+					<section>
+						<h3>Quick Reply</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="quick_reply_on_bottom" />
+									<span>Show Quick Reply on the bottom of the page</span>
+								</label>
+							</div>
+							
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="post_button_before_preview" />
+									<span>Move the post button in front of the preview button</span>
+								</label>
+							</div>
+                            
+                            <div class="checkbox">
+								<label>
+									<input type="checkbox" id="tag_buttons_on_quickpost" />
+									<span>Show HTML tag buttons on the quick reply</span>
+								</label>
+							</div>
+						</div>
+									
+					</section>
+                    <section>
+                        <h3>Notifications</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="notify_on_highlighted_user" />
+                                    <span>Notify when a highlighted user posts</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="notify_on_quote" />
+                                    <span>Notify when one of your posts is quoted</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="notify_on_new_page" />
+                                    <span>Notify when a new page is created</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Images</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="click_expand_thumbnail" />
+                                    <span>Click thumbnailed image to expand</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="drag_resize_image" />
+                                    <span>Drag image to resize</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</html>

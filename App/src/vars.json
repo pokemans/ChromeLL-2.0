@@ -1,0 +1,26 @@
+var boards = {"Misc.":{
+                 "Profile":"https://endoftheinter.net/profile.php",
+                 "Wiki":"https://wiki.endoftheinter.net/index.php/Main_Page",
+                 "Private Messages":"https://endoftheinter.net/inbox.php",
+                 "ChromeLL Options":"%extension%options.html"},
+              "Social Boards":{
+                 "Life, the Universe, and Everything":"42",
+                 "Pipe Mania":"51",
+                 "Humans Anonymous":"444",
+                 "Mostly Harmless":"58",
+                 "Strong Homo":"77"},
+              "Topical Discussion Boards":{
+                 "Fitness":"73",
+                 "LUE++":"47",
+                 "Starcraft":"5749",
+                 "Relation Ship":"74",
+                 "Music":"75"},
+              "Site Boards":{
+                 "Requests":"78",
+                 "Complaints Department":"56",
+                 "LL Mart":"419",
+                 "Referral Mania":"54494",
+                 "Suicide":"57",
+                 "Site Suggestions":"45",
+                 "LUEtari 2600":"2600"}
+             };

@@ -1,0 +1,9 @@
+ChromeLL-2.0 is an extension for Google Chrome / Chromium
+
+Install by downloading the source, unpacking it to a folder, then loading it in chrome with "Load Unpacked Extension"
+
+
+
+
+NOTE this is the development version and may not always work.
+Please download the stable release at https://chairface.org/ext for normal use

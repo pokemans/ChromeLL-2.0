@@ -1,0 +1,20 @@
+{
+  "name": "ChromeLL",
+  "version": "2.0.12.430",
+  "update_url": "http://www.chairface.org/ext/updates.xml",
+  "description": "Enhancements for the forums at the End of the Internet",
+  "options_page": "options.html",
+  "minimum_chrome_version": "9.0.193.0",
+  "icons": {
+  	"16": "Style/images/favicon.ico",
+	"48": "Style/images/lueshi_48.png",
+	"128":	"Style/images/lueshi_128.png"
+  },
+  "background_page": "background.html",
+  "content_scripts": [
+  {
+    "matches": ["http://boards.endoftheinter.net/showmessages.php*", "https://boards.endoftheinter.net/showmessages.php*"],
+    "js": ["App/src/messageList.js"]
+  }],
+  "permissions": [ "tabs", "notifications", "contextMenus", "webRequest", "webRequestBlocking", "http://*.endoftheinter.net/", "https://*.endoftheinter.net/"]
+}
