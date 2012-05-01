@@ -14,7 +14,11 @@
   "content_scripts": [
   {
     "matches": ["http://boards.endoftheinter.net/showmessages.php*", "https://boards.endoftheinter.net/showmessages.php*"],
-    "js": ["App/src/messageList.js"]
+    "js": ["App/src/messageList.js", "App/src/allPages.js"]
+  },
+  {
+    "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*"],
+    "js": ["App/src/topicList.js", "App/src/allPages.js"] 
   }],
   "permissions": [ "tabs", "notifications", "contextMenus", "webRequest", "webRequestBlocking", "http://*.endoftheinter.net/", "https://*.endoftheinter.net/"]
 }

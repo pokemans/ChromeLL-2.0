@@ -6,7 +6,7 @@ var messageList = {
         }
     },
     drag_resize_image: function(){
-        console.log(document.getElementsByClassName('img'));
+        //console.log(document.getElementsByClassName('img'));
     },
 }
 var messageListHelper = {
@@ -26,16 +26,23 @@ var messageListHelper = {
         if(messageListHelper.dragEvent){
             console.log(evt);
         }
-    }
-}
-chrome.extension.sendRequest({need:"config"}, function(response){
-    for(var i in messageList){
-            if(response.data[i]){
-                try{
-                    messageList[i]();
-                }catch(err){
-                    console.log("error in " + i + ":", err);
+    },
+    init: function(){
+        chrome.extension.sendRequest({need:"config"}, function(conf){
+            for(var i in messageList){
+                if(conf.data[i]){
+                    try{
+                        messageList[i]();
+                    }catch(err){
+                        console.log("error in " + i + ":", err);
+                    }
                 }
             }
+        });
+    },
+    livelinks: function(evt){
+        if (evt.target.getElementsByClassName("message-top")[0]) messageListHelper.init();
     }
-});
+}
+messageListHelper.init();
+document.addEventListener('DOMNodeInserted', messageListHelper.livelinks);
