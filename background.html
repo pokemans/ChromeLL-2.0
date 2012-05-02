@@ -1,9 +1,11 @@
 <html>
 <head>
 <script type="text/javascript" src="App/src/vars.json"></script>
+<script type="text/javascript" src="App/src/allBg.js"></script>
 <script type="text/javascript">
 var board = Array();
 var cfg = JSON.parse(localStorage['ChromeLL-Config']);
+var activeListeners = {};
 function buildContextMenu()
 {
     board = null;
@@ -34,11 +36,7 @@ function handleHttpsRedirect(dest){
     return { redirectUrl: dest.url.replace(/^http/i, "https")}
 }
 
-if(cfg.force_https){
-    chrome.webRequest.onBeforeRequest.addListener(function(dest){
-        return { redirectUrl: dest.url.replace(/^http/i, "https")}
-    },{"urls":["http://*.endoftheinter.net/*"]}, ['blocking']);
-}
+allBg.init_listener(cfg);
 
 chrome.extension.onRequest.addListener(
     function(request, sender, sendResponse) {

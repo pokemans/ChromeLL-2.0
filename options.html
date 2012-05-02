@@ -553,6 +553,7 @@ span.desc {
 <link rel="stylesheet" href="Style/css/config/select.css">
 <script type="text/javascript" src="App/Lib/Ext/jquery.js"></script>
 <script type="text/javascript" src="App/Lib/Ext/jqUi.js"></script>
+<script type="text/javascript" src="App/src/allBg.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
     $('.options_navigation_link').click(function() {
@@ -593,12 +594,13 @@ $(document).ready(function(){
     document.getElementById('version').innerText = app.version;
 });
 $(document).change(function(){
-    var saveString = { };
+    var cfg = { };
     inputs = $(":checkbox");
     for(var i in inputs){
-        saveString[inputs[i].id] = inputs[i].checked;
+        cfg[inputs[i].id] = inputs[i].checked;
     }
-    localStorage['ChromeLL-Config'] = JSON.stringify(saveString);
+    localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
+    allBg.init_listener(cfg);
 });
 </script>
 <body>
