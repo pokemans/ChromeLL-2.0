@@ -4,8 +4,8 @@
 <script type="text/javascript" src="App/src/allBg.js"></script>
 <script type="text/javascript">
 var board = Array();
-var cfg = JSON.parse(localStorage['ChromeLL-Config']);
-var activeListeners = {};
+var cfg;
+(localStorage['ChromeLL-Config'] == undefined) ? cfg = {} : cfg = JSON.parse(localStorage['ChromeLL-Config']);
 function buildContextMenu()
 {
     board = null;

@@ -1,7 +1,6 @@
 var allBg = {
     activeListeners: { "force_https": false, "batch_upload": false},
     init_listener: function(cfg){
-        console.log(cfg.force_https, allBg.activeListeners.force_https);
         if(cfg.force_https){
             allBg.activeListeners.force_https = true;
             chrome.webRequest.onBeforeRequest.addListener(allBg.handle_redirect, {"urls":["http://*.endoftheinter.net/*"]}, ['blocking']);
