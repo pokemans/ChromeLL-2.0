@@ -36,6 +36,10 @@ function handleHttpsRedirect(dest){
     return { redirectUrl: dest.url.replace(/^http/i, "https")}
 }
 
+for(var i in allBg.activeListeners){
+    allBg.activeListeners[i] = cfg[i];
+    console.log('setting: ' + i + " " + allBg.activeListeners[i]);
+}
 allBg.init_listener(cfg);
 
 chrome.extension.onRequest.addListener(
@@ -44,6 +48,10 @@ chrome.extension.onRequest.addListener(
             case "config":
                 sendResponse({"data":JSON.parse(localStorage['ChromeLL-Config'])});
                 cfg = JSON.parse(localStorage['ChromeLL-Config']);
+                break;
+            case "save":
+                cfg[request.name] = request.data;
+                localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
                 break;
             defaiult:
                 console.log("Error in request listener - undefined parameter?");
