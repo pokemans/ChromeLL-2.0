@@ -207,7 +207,7 @@ var messageListHelper = {
         var topic = window.location.href.match(/topic=(\d+)/)[1];
         var heads = Array();
         var messages = document.getElementsByClassName('message-container');
-        for(var i = 0; i < messages.length - 1; i++){
+        for(var i = 0; i < messages.length; i++){
             heads.push(messages[i].getElementsByClassName('message-top')[0]);
         }
         var tc;
@@ -403,6 +403,12 @@ var messageListLivelinks = {
             document.title = "(" + (posts + 1) + ") " + document.title.replace(/\(\d+\) /, "");
         }else{
             document.title = "(" + posts + ") " + document.title;
+        }
+    },
+    highlight_tc: function(el){
+        var topic = window.location.href.match(/topic=(\d+)/)[1];
+        if(el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase == config.tcs[topic].tc){
+            el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].style.color = '#' + config.tc_highlight_color;
         }
     },
     number_posts: function(el){
