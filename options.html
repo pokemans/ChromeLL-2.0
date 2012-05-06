@@ -7,7 +7,7 @@
 
 body {
   cursor: default;
-  font-family: Open Sans, sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   margin: 0;
 }
@@ -581,6 +581,7 @@ $(document).ready(function(){
     // restore config settings
     if(localStorage['ChromeLL-Config'] == '' || localStorage['ChromeLL-Config'] == undefined){
         console.log("Blank Config. Rebuilding");
+        localStorage['ChromeLL-Config'] = '{}';
     }else{
         console.log('loading config');
         var config = JSON.parse(localStorage['ChromeLL-Config']);
@@ -594,7 +595,7 @@ $(document).ready(function(){
     document.getElementById('version').innerText = app.version;
 });
 $(document).change(function(){
-    var cfg = { };
+    var cfg = JSON.parse(localStorage['ChromeLL-Config']);
     inputs = $(":checkbox");
     for(var i in inputs){
         cfg[inputs[i].id] = inputs[i].checked;
@@ -613,7 +614,7 @@ $(document).change(function(){
 			<li class="navbar-item navbar-item-selected options_navigation_link" id="general_link">General</li>
 			<li class="navbar-item options_navigation_link" id="topiclist_link">Topic List</li>
 			<li class="navbar-item options_navigation_link" id="messagelist_link">Message List</li>
-			<li class="navbar-item options_navigation_link" id="profile_link">Profile</li>
+			<li class="navbar-item options_navigation_link" id="profile_link">Profile/PM<small>s</small></li>
 			<br />
             <li class="navbar-item options_navigation_link" id="about_link">About</li>
 			<li class="note"><strong>Version:</strong> <span id="version"></span></li>
@@ -635,7 +636,12 @@ $(document).change(function(){
 									<span>Keep the Userbar + Menubar at the top of the screen</span>
 								</label>
 							</div>
-                
+                            <div class="checkbox">
+								<label>
+									<input type="checkbox" id="short_title" />
+									<span>Shorten page title (remove "End of the Internet")</span>
+								</label>
+							</div>
 						</div>
 					</section>
 					
@@ -649,6 +655,17 @@ $(document).change(function(){
 								</label>							
 							</div>
 							
+						</div>
+					</section>
+                    <section>
+						<h3>Notifications</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="sys_notifications" />
+									<span>Show notifications about ChromeLL events (when updated, etc)</span>
+								</label>
+							</div>							
 						</div>
 					</section>
                     <!--
@@ -783,14 +800,6 @@ $(document).change(function(){
                                     <span>Enable batch uploader</span>
                                 </label>
                             </div>
-                            <!--
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="drag_resize_image" />
-                                    <span>Drag image to resize</span>
-                                </label>
-                            </div>
-                            -->
                         </div>
                     </section>
                     <section>
@@ -800,6 +809,153 @@ $(document).change(function(){
                                 <label>
                                     <input type="checkbox" id="user_notes" />
                                     <span>User notes</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="ignorator_messagelist" />
+                                    <span>Enable ignorator for posts</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="userhl_messagelist" />
+                                    <span>Enable user highlighing for posts</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Posts</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="number_posts" />
+                                    <span>Number posts</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="post_title_notification" />
+                                    <span>Show unread posts in page title</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Quickpost</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="quickpost_tag_buttons" />
+                                    <span>Show HTML tag buttons (bold, italic, etc)</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="quickpost_on_pgbottom" />
+                                    <span>Quickpost on page bottom</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="post_before_preview" />
+                                    <span>Post button before Preview button</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+				</div>
+                <div class="page hidden" id="profile_page">
+                    <h1>PM Inbox</h1>
+                    <section>
+                        <h3>Users</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="ignorator_messagelist_pm" />
+                                    <span>Enable ignorator for PMs</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="userhl_messagelist_pm" />
+                                    <span>Enable user highlighting for PMs</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+					<h1>PM Threads</h1>
+                    <section>
+                        <h3>Images</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="click_expand_thumbnail_pm" />
+                                    <span>Click to expand thumbnailed images</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="batch_uploader_pm" />
+                                    <span>Enable batch uploader</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Users</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="user_notes_pm" />
+                                    <span>User notes</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="userhl_messagelist_pm" />
+                                    <span>Enable user highlighing for PM messages</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Posts</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="number_posts_pm" />
+                                    <span>Number posts</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="post_title_notification_pm" />
+                                    <span>Show unread posts in page title</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Quickpost</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="quickpost_tag_buttons_pm" />
+                                    <span>Show HTML tag buttons (bold, italic, etc)</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="quickpost_on_pgbottom_pm" />
+                                    <span>Quickpost on page bottom</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="post_before_preview_pm" />
+                                    <span>Post button before Preview button</span>
                                 </label>
                             </div>
                         </div>

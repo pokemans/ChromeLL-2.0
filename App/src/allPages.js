@@ -10,6 +10,9 @@ var allPages = {
         document.getElementsByClassName('userbar')[0].style.width = "99%";
         document.getElementsByClassName('userbar')[0].style.top = "33px";
         document.getElementsByClassName('menubar')[0].style.marginRight = "20px";
+    },
+    short_title: function(){
+        document.title = document.title.replace(/End of the Internet - /i, '');
     }
 }
     

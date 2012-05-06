@@ -24,7 +24,7 @@ function buildContextMenu()
 }
 function handleContext(info){
     if(board[info.menuItemId] % 1 === 0){
-        chrome.tabs.create({"url":"https://boards.endoftheinter.net/showtopics.php?board=" + board[info.menuItemId]});
+        chrome.tabs.create({"url":"http://boards.endoftheinter.net/showtopics.php?board=" + board[info.menuItemId]});
     }else{
         var url = board[info.menuItemId].replace("%extension%", chrome.extension.getURL("/"));
         chrome.tabs.create({"url":url});
