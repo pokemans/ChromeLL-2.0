@@ -547,6 +547,9 @@ span.desc {
 	font-style: italic;
 	font-size: x-small;
 }
+.user_highlight{
+    padding-top:10px;
+}
 </style>
 <link rel="stylesheet" href="Style/css/config/button.css">
 <link rel="stylesheet" href="Style/css/config/checkbox.css">
@@ -589,20 +592,32 @@ $(document).ready(function(){
         for(var i in checkboxes){
             checkboxes[i].checked = config[checkboxes[i].id];
         }
+        var textboxes = $(":text");
+        for(var i in textboxes){
+            if(config[textboxes[i].id] == undefined) config[textboxes[i].id] = "";
+            textboxes[i].value = config[textboxes[i].id];
+        }
     }
     // show version
     var app = chrome.app.getDetails();
     document.getElementById('version').innerText = app.version;
 });
-$(document).change(function(){
+$(document).change(saveConfig);
+document.addEventListener('keyup', saveConfig);
+
+function saveConfig(){
     var cfg = JSON.parse(localStorage['ChromeLL-Config']);
     inputs = $(":checkbox");
     for(var i in inputs){
         cfg[inputs[i].id] = inputs[i].checked;
     }
+    var textboxes = $(":text");
+    for(var i in textboxes){
+        cfg[textboxes[i].id] = textboxes[i].value;
+    }
     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
     allBg.init_listener(cfg);
-});
+}
 </script>
 <body>
 <div class="header"></div>
@@ -665,10 +680,25 @@ $(document).change(function(){
 									<input type="checkbox" id="sys_notifications" />
 									<span>Show notifications about ChromeLL events (when updated, etc)</span>
 								</label>
-							</div>							
+							</div>
+                            <div class="checkbox">
+									<input type="checkbox" id="close_notifications" />
+									<span>Close notifications after&nbsp;<input type="text" id="close_notification_time" style="width: 20px" value="5" />&nbsp;seconds</span>
+							</div>
 						</div>
 					</section>
-                    <!--
+                    <section>
+						<h3>Ignorator</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="ignorator" onclick="document.getElementById('ignorator_messagelist').checked = this.checked; document.getElementById('ignorator_topiclist').checked = this.checked; saveConfig();" />
+									<span>Ignore topics and/or posts by users listed below (comma separated list)</span>
+								</label>
+							</div>
+                            <input type="text" style="width: 550px;" id="ignorator_list" />
+						</div>
+					</section>
                     <section>
 						<h3>User Highlighting</h3>
 						<div>
@@ -682,22 +712,22 @@ $(document).change(function(){
 									<div class="columns" style="overflow: hidden;">
 										<div style="float: left; margin-right: 20px;">
 											Username:<br />
-											<input type="text" style="width: 100px;" name="user_highlight_username" />
+											<input type="text" style="width: 150px;" id="user_highlight_username" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
 											Background:<br />
-											<input type="text" style="width: 70px;" name="user_highlight_headerbackground" />
+											<input type="text" style="width: 70px;" id="user_highlight_headerbackground" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
 											Text:<br />
-											<input type="text" style="width: 70px;" name="user_highlight_headercolor" />
+											<input type="text" style="width: 70px;" id="user_highlight_headercolor" />
 										</div>
 									</div>
 								</div>
-                                <div style="font-size: small!important; margin-left: 17px">
-                                    <div class="columns" style="overflow: hidden;">
+                                <div style="font-size: small!important; margin-left: 17px; margin-top: -10px;" class="user_highlight">
+									<div class="columns" style="overflow: hidden;">
 										<div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 100px;" name="user_highlight_username" />
+											<input type="text" style="width: 150px;" name="user_highlight_username" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
 											<input type="text" style="width: 70px;" name="user_highlight_headerbackground" />
@@ -706,30 +736,43 @@ $(document).change(function(){
 											<input type="text" style="width: 70px;" name="user_highlight_headercolor" />
 										</div>
 									</div>
-                                
 								</div>
 							</div>
 						</div>
-					</section>-->
+					</section>
 					
 				</div>
 
 				<div class="page hidden" id="topiclist_page">
 					<h1>Topic List Enhancements</h1>
-                    <!--
 					<section>
-						<h3>Page Jump Buttons</h3>
+						<h3>Users</h3>
 						<div>
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" id="page_jump_buttons" />
-									<span>Enable page jump buttons</span>
+									<input type="checkbox" id="ignorator_topiclist" />
+									<span>Enable ignorator for topics</span>
+								</label>
+                            </div>
+                            <div class="checkbox">
+								<label>
+									<input type="checkbox" id="userhl_topiclist" />
+									<span>Enable user highlighting for topics</span>
 								</label>
                             </div>
 						</div>
 					</section>
-                    -->
-					
+                    <section>
+						<h3>Topics</h3>
+						<div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="page_jump_buttons" />
+									<span>Show page jump buttons</span>
+								</label>
+                            </div>
+						</div>
+					</section>
 				</div>
 				
 				<div class="page hidden" id="messagelist_page">
@@ -797,7 +840,13 @@ $(document).change(function(){
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" id="batch_uploader" />
-                                    <span>Enable batch uploader</span>
+                                    <span>Show batch upload buttons</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="drop_batch_uploader" />
+                                    <span>Drag images onto reply text area to upload</span>
                                 </label>
                             </div>
                         </div>
@@ -873,7 +922,7 @@ $(document).change(function(){
                         <div>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" id="ignorator_messagelist_pm" />
+                                    <input type="checkbox" id="ignorator_topiclist_pm" />
                                     <span>Enable ignorator for PMs</span>
                                 </label>
                             </div>
@@ -882,6 +931,17 @@ $(document).change(function(){
                                     <input type="checkbox" id="userhl_messagelist_pm" />
                                     <span>Enable user highlighting for PMs</span>
                                 </label>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Messages</h3>
+                        <div>
+                            <div class="checkbox">
+								<label>
+									<input type="checkbox" id="page_jump_buttons_pm" />
+									<span>Show page jump buttons</span>
+								</label>
                             </div>
                         </div>
                     </section>
@@ -898,7 +958,13 @@ $(document).change(function(){
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" id="batch_uploader_pm" />
-                                    <span>Enable batch uploader</span>
+                                    <span>Show batch upload buttons</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="drop_batch_uploader_pm" />
+                                    <span>Drag images onto reply text area to upload</span>
                                 </label>
                             </div>
                         </div>

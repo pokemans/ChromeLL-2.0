@@ -1,10 +1,10 @@
 {
   "name": "ChromeLL",
-  "version": "2.0.12.505",
+  "version": "2.0.12.506",
   "update_url": "http://www.chairface.org/ext/updates.xml",
   "description": "Enhancements for the forums at the End of the Internet",
   "options_page": "options.html",
-  "minimum_chrome_version": "9.0.193.0",
+  "minimum_chrome_version": "18.0.193.0",
   "icons": {
   	"16": "Style/images/favicon.ico",
 	"48": "Style/images/lueshi_48.png",
@@ -17,12 +17,20 @@
     "js": ["App/src/messageList.js", "App/src/allPages.js"]
   },
   {
+    "matches": ["http://endoftheinter.net/inboxthread.php*", "https://endoftheinter.net/inboxthread.php*"],
+    "js": ["App/src/messageList.js", "App/src/allPages.js"] 
+  },
+  {
     "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*"],
     "js": ["App/src/topicList.js", "App/src/allPages.js"] 
   },
   {
-    "matches": ["http://endoftheinter.net/inboxthread.php*", "https://endoftheinter.net/inboxthread.php*", "https://endoftheinter.net/postmsg.php*"],
-    "js": ["App/src/messageList.js", "App/src/allPages.js"] 
+    "matches": ["http://endoftheinter.net/inbox.php*", "https://endoftheinter.net/inbox.php*"],
+    "js": ["App/src/topicList.js", "App/src/allPages.js"] 
+  },
+  {
+    "matches": ["http://*.endoftheinter.net/postmsg.php*", "https://*.endoftheinter.net/postmsg.php*"],
+    "js": ["App/src/postMsg.js", "App/src/allPages.js"] 
   }],
   "permissions": [ "tabs", "notifications", "contextMenus", "webRequest", "webRequestBlocking", "http://*.endoftheinter.net/", "https://*.endoftheinter.net/"]
 }

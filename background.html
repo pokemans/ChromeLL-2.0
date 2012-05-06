@@ -6,6 +6,13 @@
 var board = Array();
 var cfg;
 (localStorage['ChromeLL-Config'] == undefined) ? cfg = {} : cfg = JSON.parse(localStorage['ChromeLL-Config']);
+
+var app = chrome.app.getDetails();
+if(localStorage['ChromeLL-Version'] != app.version){
+    console.log('ChromeLL updated! Old v: ' + localStorage['ChromeLL-Version'] + " New v: " + app.version);
+    localStorage['ChromeLL-Version'] = app.version;
+}
+
 function buildContextMenu()
 {
     board = null;
@@ -54,7 +61,7 @@ chrome.extension.onRequest.addListener(
                 localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
                 break;
             defaiult:
-                console.log("Error in request listener - undefined parameter?");
+                console.log("Error in request listener - undefined parameter?", request);
                 break;
         }
     });

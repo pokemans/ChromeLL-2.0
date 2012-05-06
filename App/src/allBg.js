@@ -11,8 +11,8 @@ var allBg = {
             allBg.activeListeners.force_https = false;
         }
 
-        if(cfg.batch_uploader){
-            chrome.webRequest.onBeforeSendHeaders.addListener(allBg.handle_batch_uploader, {"urls":["http://u.endoftheinter.net/*", "https://u.endoftheinter.net/*"]}, ['blocking', 'requestHeaders']);
+        if(cfg.drop_batch_uploader){
+            chrome.webRequest.onBeforeSendHeaders.addListener(allBg.handle_batch_uploader, {"urls":["http://u.endoftheinter.net/*", "https://u.endoftheinter.net/*", "https://chairface.org/*"]}, ['blocking', 'requestHeaders']);
             allBg.activeListeners.batch_uploader = true;
         }
         

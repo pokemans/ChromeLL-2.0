@@ -17,19 +17,40 @@ var messageList = {
             }
         });
         messageListHelper.addNotebox(document.getElementsByClassName('message-top'));
-    },        
+    },
+    ignorator_messagelist: function(){
+        if(!config.ignorator) return;
+        var s;
+        messageListHelper.ignores = config.ignorator_list.split(',');
+        for(var r = 0; r < messageListHelper.ignores.length; r++){
+            var d = 0;
+            while(messageListHelper.ignores[r].substring(d, d + 1) == ' '){
+                d++;
+            }
+            messageListHelper.ignores[r] = messageListHelper.ignores[r].substring(d,messageListHelper.ignores[r].length);
+        }
+        for(var j = 0; document.getElementsByClassName('message-top').item(j); j++){
+            s = document.getElementsByClassName('message-top').item(j);
+            for(var f = 0; messageListHelper.ignores[f]; f++){
+                if(s.getElementsByTagName('a').item(0).innerHTML.toLowerCase() == messageListHelper.ignores[f]){
+                    s.parentNode.style.display = 'none';
+                    console.log('removed post by ' + messageListHelper.ignores[f]);
+                }
+            }
+        }
+    },
     batch_uploader: function(){
-        console.log('starting batch uploader');
         var ulBox = document.createElement('input');
         ulBox.type = 'file';
         ulBox.multiple = true;
         ulBox.value = "Batch Upload";
-        ulBox.name = "batch_uploads";
+        ulBox.id = "batch_uploads";
         var ulButton = document.createElement('input');
         ulButton.type = "button";
         ulButton.value = "Batch Upload";
-        document.getElementsByClassName('quickpost-body')[0].insertBefore(ulButton, null);
-        document.getElementsByClassName('quickpost-body')[0].insertBefore(ulBox, ulButton);
+        ulButton.addEventListener('click', messageListHelper.startBatchUpload);
+        document.getElementsByClassName('quickpost-body')[0].insertBefore(ulBox, null);
+        document.getElementsByClassName('quickpost-body')[0].insertBefore(ulButton, ulBox);
     },
     post_title_notification: function(){
         document.addEventListener('scroll', messageListHelper.clearUnreadPosts);
@@ -58,9 +79,6 @@ var messageList = {
     quickpost_tag_buttons: function(){
         var m = document.getElementsByClassName('quickpost-body')[0];
         var txt = document.getElementById('u0_13');
-        if(window.location.href.indexOf('linkme.php') != -1){
-            txt = document.getElementById('u0_25');
-        }
         var insM = document.createElement('input');
         insM.value = 'Mod';
         insM.name = 'Mod';
@@ -118,6 +136,20 @@ var messageList = {
         m.insertBefore(insB, insI);
         m.insertBefore(document.createElement('br'), insB);
     },
+    drop_batch_uploader: function(){
+        var quickreply = document.getElementsByTagName('textarea')[0];
+        quickreply.addEventListener('drop', function(evt){
+            evt.preventDefault();
+            if(evt.dataTransfer.files.length == 0){
+                console.log(evt);
+                return;
+            }
+            document.getElementsByClassName('quickpost-body')[0].getElementsByTagName('b')[0].innerHTML += " (Uploading: 1/" + evt.dataTransfer.files.length + ")";
+            for(var i = 0; evt.dataTransfer.files[i]; i++){
+                commonFunctions.asyncUpload(evt.dataTransfer.files[i]);
+            }
+        });
+    },
     post_before_preview: function(){
         var m = document.getElementsByClassName('quickpost-body')[0].getElementsByTagName('input');
         var preview;
@@ -150,6 +182,18 @@ var messageList = {
     }
 }
 var messageListHelper = {
+    ignores: {},
+    startBatchUpload: function(evt){
+        var chosen = document.getElementById('batch_uploads');
+        if(chosen.files.length == 0){
+                alert('Select files and then click "Batch Upload"');
+                return;
+        }
+        document.getElementsByClassName('quickpost-body')[0].getElementsByTagName('b')[0].innerHTML += " (Uploading: 1/" + chosen.files.length + ")";
+        for(var i = 0; chosen.files[i]; i++){
+            commonFunctions.asyncUpload(chosen.files[i]);
+        }
+    },
     expandThumbnail: function(evt){
         if(evt.target.tagName != "IMG" && !evt.target.src.match('/i/t/')){
             return;
@@ -281,6 +325,16 @@ var messageListLivelinks = {
             for (var j = 0; j < el.getElementsByClassName('img').length; j++){
                 el.getElementsByClassName('img')[j].addEventListener("click", messageListHelper.expandThumbnail);
                 el.getElementsByClassName('img')[j].getElementsByTagName('a')[0].removeAttribute('href');
+            }
+        }
+    },
+    ignorator_messagelist: function(el){
+        if(!config.ignorator) return;
+        var m = el.getElementsByClassName('message-top')[0];
+        for(var f = 0; messageListHelper.ignores[f]; f++){
+            if(m.getElementsByTagName('a')[0].innerHTML.toLowerCase() == messageListHelper.ignores[f]){
+                el.style.display = "none";
+                console.log('removed livelinks post by ' + messageListHelper.ignores[f]);
             }
         }
     },
