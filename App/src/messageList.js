@@ -1,4 +1,4 @@
-var config = {};
+var config = Array();
 var messageList = {
     click_expand_thumbnail: function(){
         for (var j = 0; j < document.getElementsByClassName('img').length; j++){
@@ -150,6 +150,13 @@ var messageList = {
             }
         });
     },
+    highlight_tc: function(){
+        var tcs = messageListHelper.getTcMessages();
+        if(!tcs) return;
+        for(var i = 0; i < tcs.length; i++){
+            tcs[i].getElementsByTagName('a')[0].style.color = '#' + config.tc_highlight_color;
+        }
+    },
     post_before_preview: function(){
         var m = document.getElementsByClassName('quickpost-body')[0].getElementsByTagName('input');
         var preview;
@@ -193,6 +200,37 @@ var messageListHelper = {
         for(var i = 0; chosen.files[i]; i++){
             commonFunctions.asyncUpload(chosen.files[i]);
         }
+    },
+    getTcMessages: function(){
+        if(!config.tcs) config.tcs = {};
+        var tcs = Array();
+        var topic = window.location.href.match(/topic=(\d+)/)[1];
+        var heads = Array();
+        var messages = document.getElementsByClassName('message-container');
+        for(var i = 0; i < messages.length - 1; i++){
+            heads.push(messages[i].getElementsByClassName('message-top')[0]);
+        }
+        var tc;
+        if((!window.location.href.match('page') || window.location.href.match('page=1')) && !window.location.href.match(/u=(\d+)/)) tc = heads[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+        else{
+            if(!config.tcs[topic]){
+                console.log('Unknown TC!');
+                return;
+            }
+            tc = config.tcs[topic].tc;
+        }
+        if(!config.tcs[topic]){
+            config.tcs[topic] = {};
+            config.tcs[topic].tc = tc;
+            config.tcs[topic].date = new Date().getTime();
+        }
+        for(var i = 0; i < heads.length; i++){
+            if(heads[i].getElementsByTagName('a')[0].innerHTML.toLowerCase() == tc){
+                tcs.push(heads[i]);
+            }
+        }
+        messageListHelper.saveTcs();
+        return tcs;
     },
     expandThumbnail: function(evt){
         if(evt.target.tagName != "IMG" && !evt.target.src.match('/i/t/')){
@@ -246,6 +284,23 @@ var messageListHelper = {
             console.log(rsp);
         });
     },
+    saveTcs: function(){
+        var max = 50;
+        var lowest = Infinity;
+        var lowestTc;
+        var numTcs = 0;
+        for(var i in config.tcs){
+            if(config.tcs[i].date < lowest){
+                lowestTc = i;
+                lowest = config.tcs[i].date;
+            }
+            numTcs++;
+        }
+        if(numTcs > max) delete config.tcs[lowestTc];
+        chrome.extension.sendRequest({need:"save", name:"tcs", data:config.tcs}, function(rsp){
+            console.log(rsp);
+        });
+    },
     clearUnreadPosts: function(evt){
         if(document.title.match(/\(\d+\)/)) document.title = document.title.replace(/\(\d+\) /, "");
     },
@@ -256,11 +311,11 @@ var messageListHelper = {
             if(window.location.href.match('inboxthread')) pm = "_pm";
             for(var i in messageList){
                 if(config[i + pm]){
-                    try{
+                    //try{
                         messageList[i]();
-                    }catch(err){
-                        console.log("error in " + i + ":", err);
-                    }
+                    //}catch(err){
+                    //    console.log("error in " + i + ":", err);
+                    //}
                 }
             }
         });
