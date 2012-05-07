@@ -157,6 +157,18 @@ var messageList = {
             tcs[i].getElementsByTagName('a')[0].style.color = '#' + config.tc_highlight_color;
         }
     },
+    label_tc: function(){
+        var tcs = messageListHelper.getTcMessages();
+        if(!tcs) return;
+        var ipx, inner;
+        for(var i = 0; i < tcs.length; i++){
+            ipx = document.createElement('span');
+            inner = ' | <b>TC</b>';
+            if(config.tc_label_color && config.tc_label_color != '') inner = ' | <font color="#' + config.tc_label_color + '"><b>TC</b></font>';
+            ipx.innerHTML = inner;
+            tcs[i].insertBefore(ipx, tcs[i].getElementsByTagName('a')[0].nextSibling);
+        }
+    },
     post_before_preview: function(){
         var m = document.getElementsByClassName('quickpost-body')[0].getElementsByTagName('input');
         var preview;
@@ -285,7 +297,7 @@ var messageListHelper = {
         });
     },
     saveTcs: function(){
-        var max = 50;
+        var max = 20;
         var lowest = Infinity;
         var lowestTc;
         var numTcs = 0;
@@ -311,11 +323,11 @@ var messageListHelper = {
             if(window.location.href.match('inboxthread')) pm = "_pm";
             for(var i in messageList){
                 if(config[i + pm]){
-                    //try{
+                    try{
                         messageList[i]();
-                    //}catch(err){
-                    //    console.log("error in " + i + ":", err);
-                    //}
+                    }catch(err){
+                        console.log("error in " + i + ":", err);
+                    }
                 }
             }
         });

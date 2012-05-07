@@ -550,6 +550,11 @@ span.desc {
 .user_highlight{
     padding-top:10px;
 }
+.color-input{
+    width: 50px;
+    border: none !important;
+    border-bottom: 1px solid #333 !important;
+}
 </style>
 <link rel="stylesheet" href="Style/css/config/button.css">
 <link rel="stylesheet" href="Style/css/config/checkbox.css">
@@ -594,16 +599,40 @@ $(document).ready(function(){
         }
         var textboxes = $(":text");
         for(var i in textboxes){
-            if(config[textboxes[i].id] == undefined) config[textboxes[i].id] = "";
-            textboxes[i].value = config[textboxes[i].id];
+            if(textboxes[i].name && textboxes[i].name.match('user_highlight_user')){
+                //ignore them
+            }else if(config[textboxes[i].id]){
+                textboxes[i].value = config[textboxes[i].id];
+            }
         }
     }
+    
+    //add a listener to add userhighlight boxes
+    document.addEventListener('keyup', function(evt){
+        if(!evt.target.name) return;
+        if(evt.target.name == "user_highlight_username"){
+            var datas = document.getElementById('user_highlight').getElementsByClassName('user_name');
+            var empty = false;
+            for(var i = 1; datas[i]; i++){
+                if(datas[i].value == '') empty = true;
+            }
+            if(!empty) addUserHighlightDiv();
+        }
+    });
+    
     // show version
     var app = chrome.app.getDetails();
     document.getElementById('version').innerText = app.version;
 });
 $(document).change(saveConfig);
 document.addEventListener('keyup', saveConfig);
+
+function addUserHighlightDiv(){
+    var ins = document.getElementById('user_highlight').getElementsByClassName('user_name')[0].parentNode.parentNode.cloneNode(true);
+    ins.className = "user_highlight_data";
+    ins.style.display = "block";
+    document.getElementById('user_highlight').insertBefore(ins, null);
+}
 
 function saveConfig(){
     var cfg = JSON.parse(localStorage['ChromeLL-Config']);
@@ -613,7 +642,22 @@ function saveConfig(){
     }
     var textboxes = $(":text");
     for(var i in textboxes){
-        cfg[textboxes[i].id] = textboxes[i].value;
+        if(textboxes[i].name && textboxes[i].name.match('user_highlight')){
+            //ignore them
+        }else{
+            cfg[textboxes[i].id] = textboxes[i].value;
+        }
+    }
+    var userhlData = document.getElementById('user_highlight').getElementsByClassName('user_highlight_data');
+    var name;
+    cfg.user_highlight_data = {};
+    for(var i = 0; userhlData[i]; i++){
+        name = userhlData[i].getElementsByClassName('user_name')[0].value;
+        if(name != ''){
+            cfg.user_highlight_data[name] = {};
+            cfg.user_highlight_data[name].bg = userhlData[i].getElementsByClassName('header_bg')[0].value;
+            cfg.user_highlight_data[name].color = userhlData[i].getElementsByClassName('header_color')[0].value;
+        }
     }
     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
     allBg.init_listener(cfg);
@@ -710,30 +754,41 @@ function saveConfig(){
                                 <br />
                                 <div style="font-size: small!important; margin-left: 17px; margin-top: -10px;">
 									<div class="columns" style="overflow: hidden;">
-										<div style="float: left; margin-right: 20px;">
+										<div style="float: left; width: 157px; margin-right: 20px;">
 											Username:<br />
-											<input type="text" style="width: 150px;" id="user_highlight_username" />
+											
                                         </div>
-                                        <div style="float: left; margin-right: 20px;">
+                                        <div style="float: left; width: 80px; margin-right: 20px;">
 											Background:<br />
-											<input type="text" style="width: 70px;" id="user_highlight_headerbackground" />
+											
                                         </div>
-                                        <div style="float: left; margin-right: 20px;">
+                                        <div style="float: left; width: 70px; margin-right: 20px;">
 											Text:<br />
-											<input type="text" style="width: 70px;" id="user_highlight_headercolor" />
+											
 										</div>
 									</div>
 								</div>
-                                <div style="font-size: small!important; margin-left: 17px; margin-top: -10px;" class="user_highlight">
-									<div class="columns" style="overflow: hidden;">
+                                <div style="font-size: small!important; margin-left: 17px;" id="user_highlight" >
+									<div class="columns" style="overflow: hidden; display: none;" class="user_highlight_data_blank">
 										<div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 150px;" name="user_highlight_username" />
+											<input type="text" style="width: 150px;" class="user_name" name="user_highlight_username" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 70px;" name="user_highlight_headerbackground" />
+											<input type="text" style="width: 70px;" class="header_bg" name="user_highlight_headerbackground" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 70px;" name="user_highlight_headercolor" />
+											<input type="text" style="width: 70px;" class="header_color" name="user_highlight_headercolor" />
+										</div>
+									</div>
+                                    <div class="columns user_highlight_data" style="overflow: hidden;">
+										<div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 150px;" class="user_name" name="user_highlight_username" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="header_bg" name="user_highlight_headerbackground" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="header_color" name="user_highlight_headercolor" />
 										</div>
 									</div>
 								</div>
@@ -874,7 +929,11 @@ function saveConfig(){
                             </div>
                             <div class="checkbox">
                                     <input type="checkbox" id="highlight_tc" />
-                                    <span>Highlight the TC's username color <input type="text" id="tc_highlight_color" style="width: 50px" /></span>
+                                    <span>Highlight the TC's username color <input type="text" id="tc_highlight_color" class="color-input" /></span>
+                            </div>
+                            <div class="checkbox">
+                                    <input type="checkbox" id="label_tc" />
+                                    <span>Show <b>TC</b> next to the TC's username color <input type="text" id="tc_label_color" class="color-input" /></span>
                             </div>
                         </div>
                     </section>
