@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans&v1' rel='stylesheet' type='text/css'>
+<link href='/Style/css/config/opensans.css' rel='stylesheet' type='text/css'>
 <title>ChromeLL Options</title>
 <style type="text/css">
 
@@ -559,8 +559,10 @@ span.desc {
 <link rel="stylesheet" href="Style/css/config/button.css">
 <link rel="stylesheet" href="Style/css/config/checkbox.css">
 <link rel="stylesheet" href="Style/css/config/select.css">
+<link rel="stylesheet" href="Style/css/config/colorpicker.css">
 <script type="text/javascript" src="App/Lib/Ext/jquery.js"></script>
 <script type="text/javascript" src="App/Lib/Ext/jqUi.js"></script>
+<script type="text/javascript" src="App/Lib/Ext/colorpicker.js"></script>
 <script type="text/javascript" src="App/src/allBg.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -599,12 +601,19 @@ $(document).ready(function(){
         }
         var textboxes = $(":text");
         for(var i in textboxes){
-            if(textboxes[i].name && textboxes[i].name.match('user_highlight_user')){
-                //ignore them
+            if(textboxes[i].name && textboxes[i].name.match('user_highlight_')){
+                //console.log('found a textbox to ignore: ' + textboxes[i]);
             }else if(config[textboxes[i].id]){
                 textboxes[i].value = config[textboxes[i].id];
             }
         }
+    }
+    
+    for(var j in config.user_highlight_data){
+        document.getElementsByClassName('user_name')[document.getElementsByClassName('user_name').length - 1].value = j;
+        document.getElementsByClassName('header_bg')[document.getElementsByClassName('header_bg').length - 1].value = config.user_highlight_data[j].bg;
+        document.getElementsByClassName('header_color')[document.getElementsByClassName('header_color').length - 1].value = config.user_highlight_data[j].color;
+        addUserHighlightDiv();
     }
     
     //add a listener to add userhighlight boxes
@@ -623,7 +632,27 @@ $(document).ready(function(){
     // show version
     var app = chrome.app.getDetails();
     document.getElementById('version').innerText = app.version;
+    setColorPicker();
+    saveConfig();
 });
+
+function setColorPicker(){
+    $('.color').ColorPicker({onChange: function(hsb, hex, rgb, el) {
+        el.value = hex;
+        saveConfig();
+	},
+    onSubmit: function(hsb, hex, rgb, el) {
+		$(el).val(hex);
+		$(el).ColorPickerHide();
+        saveConfig();
+	},
+    livePreview: true,
+    color: "",
+    onBeforeShow: function () {
+		$(this).ColorPickerSetColor(this.value);
+	}});
+}
+
 $(document).change(saveConfig);
 document.addEventListener('keyup', saveConfig);
 
@@ -632,6 +661,7 @@ function addUserHighlightDiv(){
     ins.className = "user_highlight_data";
     ins.style.display = "block";
     document.getElementById('user_highlight').insertBefore(ins, null);
+    setColorPicker();
 }
 
 function saveConfig(){
@@ -642,8 +672,8 @@ function saveConfig(){
     }
     var textboxes = $(":text");
     for(var i in textboxes){
-        if(textboxes[i].name && textboxes[i].name.match('user_highlight')){
-            //ignore them
+        if(textboxes[i].name && textboxes[i].name.match('user_highlight_')){
+            //textboxes[i].ColorPicker();
         }else{
             cfg[textboxes[i].id] = textboxes[i].value;
         }
@@ -652,11 +682,13 @@ function saveConfig(){
     var name;
     cfg.user_highlight_data = {};
     for(var i = 0; userhlData[i]; i++){
-        name = userhlData[i].getElementsByClassName('user_name')[0].value;
+        name = userhlData[i].getElementsByClassName('user_name')[0].value.toLowerCase();
         if(name != ''){
             cfg.user_highlight_data[name] = {};
             cfg.user_highlight_data[name].bg = userhlData[i].getElementsByClassName('header_bg')[0].value;
+            userhlData[i].getElementsByClassName('user_name')[0].style.background = '#' + cfg.user_highlight_data[name].bg;
             cfg.user_highlight_data[name].color = userhlData[i].getElementsByClassName('header_color')[0].value;
+            userhlData[i].getElementsByClassName('user_name')[0].style.color = '#' + cfg.user_highlight_data[name].color;
         }
     }
     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
@@ -676,7 +708,6 @@ function saveConfig(){
 			<li class="navbar-item options_navigation_link" id="profile_link">Profile/PM<small>s</small></li>
 			<br />
             <li class="navbar-item options_navigation_link" id="about_link">About</li>
-			<li class="note"><strong>Version:</strong> <span id="version"></span></li>
 		</ul>
 	</div>
 	
@@ -748,7 +779,7 @@ function saveConfig(){
 						<div>
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" id="enable_user_highlight" />
+									<input type="checkbox" id="enable_user_highlight" onclick="document.getElementById('userhl_messagelist').checked = this.checked; document.getElementById('userhl_topiclist').checked = this.checked; saveConfig();"/>
 									<span>Highlight users listed below</span>
 								</label>
                                 <br />
@@ -771,13 +802,13 @@ function saveConfig(){
                                 <div style="font-size: small!important; margin-left: 17px;" id="user_highlight" >
 									<div class="columns" style="overflow: hidden; display: none;" class="user_highlight_data_blank">
 										<div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 150px;" class="user_name" name="user_highlight_username" />
+											<input type="text" style="width: 150px;" class="user_name" name="user_highlight_username" value="" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 70px;" class="header_bg" name="user_highlight_headerbackground" />
+											<input type="text" style="width: 70px;" class="color header_bg" name="user_highlight_headerbackground" value="" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 70px;" class="header_color" name="user_highlight_headercolor" />
+											<input type="text" style="width: 70px;" class="color header_color" name="user_highlight_headercolor" value="" />
 										</div>
 									</div>
                                     <div class="columns user_highlight_data" style="overflow: hidden;">
@@ -785,17 +816,16 @@ function saveConfig(){
 											<input type="text" style="width: 150px;" class="user_name" name="user_highlight_username" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 70px;" class="header_bg" name="user_highlight_headerbackground" />
+											<input type="text" style="width: 70px;" class="color header_bg" name="user_highlight_headerbackground" />
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
-											<input type="text" style="width: 70px;" class="header_color" name="user_highlight_headercolor" />
+											<input type="text" style="width: 70px;" class="color header_color" name="user_highlight_headercolor" />
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</section>
-					
+					</section>					
 				</div>
 
 				<div class="page hidden" id="topiclist_page">
@@ -834,32 +864,6 @@ function saveConfig(){
 					<h1>Message List Enhancements</h1>
                     <!--
 					<section>
-						<h3>Quick Reply</h3>
-						<div>
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" id="quick_reply_on_bottom" />
-									<span>Show Quick Reply on the bottom of the page</span>
-								</label>
-							</div>
-							
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" id="post_button_before_preview" />
-									<span>Move the post button in front of the preview button</span>
-								</label>
-							</div>
-                            
-                            <div class="checkbox">
-								<label>
-									<input type="checkbox" id="tag_buttons_on_quickpost" />
-									<span>Show HTML tag buttons on the quick reply</span>
-								</label>
-							</div>
-						</div>
-									
-					</section>
-                    <section>
                         <h3>Notifications</h3>
                         <div>
                             <div class="checkbox">
@@ -929,7 +933,7 @@ function saveConfig(){
                             </div>
                             <div class="checkbox">
                                     <input type="checkbox" id="highlight_tc" />
-                                    <span>Highlight the TC's username color <input type="text" id="tc_highlight_color" class="color-input" /></span>
+                                    <span>Highlight the TC's username color <input type="text" id="tc_highlight_color" class="color color-input" /></span>
                             </div>
                             <div class="checkbox">
                                     <input type="checkbox" id="label_tc" />
@@ -991,7 +995,7 @@ function saveConfig(){
                             </div>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" id="userhl_messagelist_pm" />
+                                    <input type="checkbox" id="userhl_topiclist_pm" />
                                     <span>Enable user highlighting for PMs</span>
                                 </label>
                             </div>
@@ -1090,6 +1094,21 @@ function saveConfig(){
                         </div>
                     </section>
 				</div>
+                <div class="page hidden" id="about_page">
+                <h1>Development Options</h1>
+                    <section>
+                        <h3>Log</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="debug" />
+                                    <span>Enable debug logging to console</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                <h1>Version: <span id="version"></span></h1>
+                </div>     
 			</div>
 		</div>
 	</div>

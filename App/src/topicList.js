@@ -18,7 +18,7 @@ var topicList = {
                 title = g[i].getElementsByTagName('td')[1];
                     for(var f = 0; f < ignores.length; f++){
                         if(title.getElementsByTagName('a').item(0).innerHTML.toLowerCase() == ignores[f]){
-                            console.log('found topic to remove: \"' + g.item(i).getElementsByTagName('td').item(0).getElementsByTagName('a').item(0).innerHTML.toLowerCase() + "\" author: " + ignores[f] + " topic: " + i);
+                            if(config.debug) console.log('found topic to remove: \"' + g.item(i).getElementsByTagName('td').item(0).getElementsByTagName('a').item(0).innerHTML.toLowerCase() + "\" author: " + ignores[f] + " topic: " + i);
                             title.parentNode.style.display = 'none';				
                         }
                     }
@@ -34,12 +34,29 @@ var topicList = {
         var tmp;
         for(var i = 1; trs[i]; i++){
             if(trs[i].getElementsByTagName('td')[0]){
-            insert = document.createElement('span');
-            insert.style.float = 'right';
-            insert.addEventListener('click', topicListHelper.jumpHandlerTopic, false);
-            tmp = trs[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0].href.match(/(topic|thread)=([0-9]+)/)[2];
-            insert.innerHTML = '<a href="##' + tmp + '" id="jumpWindow">#</a> <a href="##' + tmp + '" id="jumpLast">&gt;</a>';
-            trs[i].getElementsByTagName('td')[0].insertBefore(insert, trs[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0]);
+                insert = document.createElement('span');
+                insert.style.float = 'right';
+                insert.addEventListener('click', topicListHelper.jumpHandlerTopic, false);
+                tmp = trs[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0].href.match(/(topic|thread)=([0-9]+)/)[2];
+                insert.innerHTML = '<a href="##' + tmp + '" id="jumpWindow">#</a> <a href="##' + tmp + '" id="jumpLast">&gt;</a>';
+                trs[i].getElementsByTagName('td')[0].insertBefore(insert, trs[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0]);
+            }
+        }
+    },
+    userhl_topiclist: function(){
+        var topics = topicListHelper.getTopics();
+        var user;
+        for(var i = 1; topics[i]; i++){
+            user = topics[i].getElementsByTagName('td')[1].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+            if(config.user_highlight_data[user]){
+                if(config.debug)  console.log('highlighting topic by ' + user);
+                for(var j = 0; topics[i].getElementsByTagName('td')[j]; j++){
+                    topics[i].getElementsByTagName('td')[j].style.background = '#' + config.user_highlight_data[user].bg;
+                    topics[i].getElementsByTagName('td')[j].style.color = '#' + config.user_highlight_data[user].color;
+                }
+                for(var j = 0; topics[i].getElementsByTagName('a')[j]; j++){
+                    topics[i].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+                }
             }
         }
     }
@@ -59,6 +76,9 @@ var topicListHelper = {
         }
         window.location = ev.srcElement.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].getElementsByTagName('a')[2].href + '&page=' + pg;
     },
+    getTopics: function(){
+        return document.getElementsByClassName('grid')[0].getElementsByTagName('tr');
+    },        
     init: function(){
         chrome.extension.sendRequest({need:"config"}, function(conf){
             config = conf.data;

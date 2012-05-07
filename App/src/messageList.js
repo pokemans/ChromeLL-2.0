@@ -34,7 +34,7 @@ var messageList = {
             for(var f = 0; messageListHelper.ignores[f]; f++){
                 if(s.getElementsByTagName('a').item(0).innerHTML.toLowerCase() == messageListHelper.ignores[f]){
                     s.parentNode.style.display = 'none';
-                    console.log('removed post by ' + messageListHelper.ignores[f]);
+                    if(config.debug) console.log('removed post by ' + messageListHelper.ignores[f]);
                 }
             }
         }
@@ -197,6 +197,22 @@ var messageList = {
             postnum.className = "PostNumber";
             postnum.innerHTML = " | #" + ((i + 1) + (50 * (page - 1)));
             posts[i].getElementsByClassName('message-top')[0].insertBefore(postnum, null);
+        }
+    },
+    userhl_messagelist: function(){
+        if(!config.enable_user_highlight) return;
+        var messages = document.getElementsByClassName('message-container');
+        var user;
+        for(var i = 0; messages[i]; i++){
+            user = messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+            if(config.user_highlight_data[user]){
+                if(config.debug) console.log('highlighting post by ' + user);
+                messages[i].getElementsByClassName('message-top')[0].style.background = '#' + config.user_highlight_data[user].bg;
+                messages[i].getElementsByClassName('message-top')[0].style.color = '#' + config.user_highlight_data[user].color;
+                for(var j = 0; messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[j]; j++){
+                    messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+                }
+            }                
         }
     }
 }
@@ -430,6 +446,17 @@ var messageListLivelinks = {
         post.className = "PostNumber";
         post.innerHTML = " | #" + (parseInt(number) + 1);
         el.getElementsByClassName('message-top')[0].insertBefore(post, null);
+    },
+    userhl_messagelist: function(el){
+        if(!config.enable_user_highlight) return;
+        var user = el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+        if(config.user_highlight_data[user]){
+            el.getElementsByClassName('message-top')[0].style.background = '#' + config.user_highlight_data[user].bg;
+            el.getElementsByClassName('message-top')[0].style.color = '#' + config.user_highlight_data[user].color;
+            for(var i = 0; el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[i]; i++){
+                el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[i].style.color = '#' + config.user_highlight_data[user].color;
+            }
+        }
     }
 }
 messageListHelper.init();
