@@ -60,6 +60,16 @@ chrome.extension.onRequest.addListener(
                 cfg[request.name] = request.data;
                 localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
                 break;
+            case "notify":
+                var notification = webkitNotifications.createNotification(
+                    'Style/images/lueshi_48.png',
+                    request.title,
+                    request.message);
+                notification.show();
+                if(cfg.close_notifications){
+                    setTimeout(function(){notification.cancel();}, (parseInt(cfg.close_notification_time) * 1000));
+                }
+                break;
             defaiult:
                 console.log("Error in request listener - undefined parameter?", request);
                 break;

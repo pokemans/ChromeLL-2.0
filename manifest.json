@@ -1,6 +1,6 @@
 {
-  "name": "ChromeLL2",
-  "version": "2.0.12.507",
+  "name": "ChromeLL",
+  "version": "2.0.12.508",
   "update_url": "http://www.chairface.org/ext/updates.xml",
   "description": "Enhancements for the forums at the End of the Internet",
   "options_page": "options.html",
@@ -13,24 +13,20 @@
   "background_page": "background.html",
   "content_scripts": [
   {
-    "matches": ["http://boards.endoftheinter.net/showmessages.php*", "https://boards.endoftheinter.net/showmessages.php*"],
+    "matches": ["http://boards.endoftheinter.net/showmessages.php*", "https://boards.endoftheinter.net/showmessages.php*", "http://archives.endoftheinter.net/showmessages.php*", "https://archives.endoftheinter.net/showmessages.php*", "http://endoftheinter.net/inboxthread.php*", "https://endoftheinter.net/inboxthread.php*"],
     "js": ["App/src/messageList.js", "App/src/allPages.js"]
   },
   {
-    "matches": ["http://endoftheinter.net/inboxthread.php*", "https://endoftheinter.net/inboxthread.php*"],
-    "js": ["App/src/messageList.js", "App/src/allPages.js"] 
-  },
-  {
-    "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*"],
-    "js": ["App/src/topicList.js", "App/src/allPages.js"] 
-  },
-  {
-    "matches": ["http://endoftheinter.net/inbox.php*", "https://endoftheinter.net/inbox.php*"],
+    "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*", "http://archives.endoftheinter.net/search.php*", "https://archives.endoftheinter.net/search.php*", "http://endoftheinter.net/inbox.php*", "https://endoftheinter.net/inbox.php*", "http://boards.endoftheinter.net/search.php*", "https://boards.endoftheinter.net/search.php*"],
     "js": ["App/src/topicList.js", "App/src/allPages.js"] 
   },
   {
     "matches": ["http://*.endoftheinter.net/postmsg.php*", "https://*.endoftheinter.net/postmsg.php*"],
     "js": ["App/src/postMsg.js", "App/src/allPages.js"] 
+  },
+  {
+    "matches": ["http://boards.endoftheinter.net/boardlist.php*", "https://boards.endoftheinter.net/boardlist.php*"],
+    "js": ["App/src/boardList.js", "App/src/allPages.js"] 
   }],
   "permissions": [ "tabs", "notifications", "contextMenus", "webRequest", "webRequestBlocking", "http://*.endoftheinter.net/", "https://*.endoftheinter.net/"]
 }
