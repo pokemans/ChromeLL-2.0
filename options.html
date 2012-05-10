@@ -807,6 +807,18 @@ function restoreV1Cfg(){
 									<span>Show hidden boards in the board list</span>
 								</label>
 							</div>
+                            <div class="checkbox">
+								<label>
+									<input type="checkbox" id="dramalinks" />
+									<span>Show the dramalinks ticker</span>
+								</label>
+                            </div>
+                            <div>
+                                <label>
+									<input type="checkbox" id="hide_dramalinks" />
+									<span>Double click board name to show dramalinks ticker</span>
+								</label>
+							</div>
 						</div>
 					</section>
 					
@@ -1028,18 +1040,6 @@ function restoreV1Cfg(){
                             </div>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" id="batch_uploader" />
-                                    <span>Show batch upload buttons</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="drop_batch_uploader" />
-                                    <span>Drag images onto reply text area to upload</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
                                     <input type="checkbox" id="imagemap_on_infobar" />
                                     <span>Show topic's imagemap link on the infobar</span>
                                 </label>
@@ -1101,6 +1101,12 @@ function restoreV1Cfg(){
                             </div>
                             <div class="checkbox">
                                 <label>
+                                    <input type="checkbox" id="like_button" />
+                                    <span>Show the Like button</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
                                     <input type="checkbox" id="loadquotes" />
                                     <span>Click [quoted text omitted] to load quote</span>
                                 </label>
@@ -1109,6 +1115,18 @@ function restoreV1Cfg(){
                                 <label>
                                     <input type="checkbox" id="post_title_notification" />
                                     <span>Show unread posts in page title</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="filter_me" />
+                                    <span>Filter Me button</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="expand_spoilers" />
+                                    <span>Expand Spoilers button</span>
                                 </label>
                             </div>
                             <div class="checkbox">
@@ -1142,10 +1160,40 @@ function restoreV1Cfg(){
                                     <span>Post button before Preview button</span>
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="batch_uploader" />
+                                    <span>Show batch upload buttons</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="drop_batch_uploader" />
+                                    <span>Drag images onto reply text area to upload</span>
+                                </label>
+                            </div>
                         </div>
                     </section>
 				</div>
                 <div class="page hidden" id="profile_page">
+                    <h1>Profile</h1>
+                    <section>
+                        <h3>History</h3>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="sort_history" />
+                                    <span>Sort message history by last post in topic</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="history_expand_search" />
+                                    <span>Auto expand search box in message history</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
                     <h1>PM Inbox</h1>
                     <section>
                         <h3>Users</h3>

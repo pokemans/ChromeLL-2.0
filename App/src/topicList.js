@@ -159,7 +159,7 @@ var topicListHelper = {
         }else{
             pg = last;
         }
-        window.location = ev.srcElement.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].getElementsByTagName('a')[2].href + '&page=' + pg;
+        window.location = ev.srcElement.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].getElementsByTagName('a')[0].href + '&page=' + pg;
     },
     getTopics: function(){
         return document.getElementsByClassName('grid')[0].getElementsByTagName('tr');
@@ -193,3 +193,4 @@ var topicListHelper = {
 }
 
 topicListHelper.init();
+commonFunctions.getDrama();

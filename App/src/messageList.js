@@ -298,6 +298,28 @@ var messageList = {
         m.insertBefore(insB, insI);
         m.insertBefore(document.createElement('br'), insB);
     },
+    filter_me: function(){
+        var me = '&u=' + document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].href.match(/\?user=([0-9]+)/)[1];
+        var txt = 'Filter Me';
+        var board = window.location.href.match(/board=([0-9]+)/)[1];
+        var topic = window.location.href.match(/topic=([0-9]+)/)[1];
+        var fmh;
+        if(window.location.href.indexOf(me) == -1){
+            fmh = window.location.href.split('?')[0] + '?board=' + board + '&topic=' + topic + me;
+        }else{
+            fmh = window.location.href.replace(me, '');
+            txt = 'Unfilter Me';
+        }
+        document.getElementsByClassName('infobar')[0].innerHTML += ' | <a href="' + fmh + '">' + txt + '</a>';
+    },
+    expand_spoilers: function(){
+        var ains = document.createElement('span');
+        ains.id = 'chromell_spoilers';
+        document.addEventListener('click', messageListHelper.toggleSpoilers, false);
+        ains.innerHTML = ' | <a href="##" id="chromell_spoiler">Expand Spoilers</a>';
+        var la = document.getElementsByClassName('infobar')[0].getElementsByClassName('a');
+        document.getElementsByClassName('infobar')[0].insertBefore(ains, la[la.size]);
+    },
     drop_batch_uploader: function(){
         var quickreply = document.getElementsByTagName('textarea')[0];
         quickreply.addEventListener('drop', function(evt){
@@ -346,6 +368,19 @@ var messageList = {
         post.parentNode.removeChild(post);
         preview.parentNode.insertBefore(post, preview);
     },
+    like_button: function(){
+        if(window.location.href.match('archives')) return;
+        var headID = document.getElementsByTagName("head")[0];         
+		var newScript = document.createElement('script');
+		newScript.type = 'text/javascript';
+		newScript.src = chrome.extension.getURL('like.js');
+		headID.appendChild(newScript);
+		for(var i = 0; document.getElementsByClassName('message-top').item(i); i++){
+			if(document.getElementsByClassName('message-top').item(i).getElementsByTagName('a')[2]){
+				document.getElementsByClassName('message-top').item(i).innerHTML += ' | <a href="##like' + i + '" onclick="like(this);">Like</a>';
+			}
+		}
+    },
     number_posts: function(){
         var page;
         if(!window.location.href.match(/page=/)){
@@ -358,6 +393,7 @@ var messageList = {
             var postnum = document.createElement('span');
             postnum.className = "PostNumber";
             postnum.innerHTML = " | #" + ((i + 1) + (50 * (page - 1)));
+            postnum.id = "message-number";
             posts[i].getElementsByClassName('message-top')[0].insertBefore(postnum, null);
         }
     },
@@ -421,6 +457,24 @@ var messageListHelper = {
         }
         messageListHelper.saveTcs();
         return tcs;
+    },
+    toggleSpoilers: function(el){
+        if(el.srcElement.id != 'chromell_spoiler'){
+            return;
+        }
+        var spans = document.getElementsByClassName('spoiler_on_close');
+        var nnode;	
+        for(var i = 0; spans[i]; i++){
+            nnode = spans[i].getElementsByTagName('a')[0];
+            messageListHelper.toggleSpoiler(nnode);
+        }
+    },
+    toggleSpoiler: function(obj){
+       while (!/spoiler_(?:open|close)/.test(obj.className)){
+            obj=obj.parentNode;
+        }
+        obj.className=obj.className.indexOf('closed') != -1 ? obj.className.replace('closed', 'opened') : obj.className.replace('opened', 'closed');	
+        return false;
     },
     expandThumbnail: function(evt){
         if(evt.target.tagName != "IMG" && !evt.target.src.match('/i/t/')){
@@ -599,7 +653,6 @@ var messageListLivelinks = {
         }
     },
     resize_imgs: function(el){
-        console.log('test');
         for(var i = 0; el.getElementsByTagName('img')[i]; i++){
             messageListHelper.resizeImg(el.getElementsByTagName('img')[i]);
         }
@@ -631,7 +684,7 @@ var messageListLivelinks = {
     },
     highlight_tc: function(el){
         var topic = window.location.href.match(/topic=(\d+)/)[1];
-        if(el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase == config.tcs[topic].tc){
+        if(el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase() == config.tcs[topic].tc){
             el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].style.color = '#' + config.tc_highlight_color;
         }
     },

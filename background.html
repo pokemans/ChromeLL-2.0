@@ -5,6 +5,7 @@
 <script type="text/javascript">
 var board = Array();
 var cfg;
+var drama = {};
 (localStorage['ChromeLL-Config'] == undefined) ? cfg = {} : cfg = JSON.parse(localStorage['ChromeLL-Config']);
 
 var app = chrome.app.getDetails();
@@ -37,6 +38,53 @@ function handleContext(info){
         chrome.tabs.create({"url":url});
     }
 }
+function getDrama() {
+    var dramas;
+    var xhr = new XMLHttpRequest();
+	xhr.open("GET", "http://wiki.endoftheinter.net/index.php?title=Dramalinks/current&action=raw&section=0&maxage=30", true);		
+	xhr.send();
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState == 4) {
+			var t = xhr.responseText;
+            t=t.replace(/\[\[(.+?)(\|(.+?))\]\]/g,"<a href=\"http://wiki.endoftheinter.net/index.php/$1\">$3</a>");
+			t=t.replace(/\[\[(.+?)\]\]/g,"<a href=\"http://wiki.endoftheinter.net/index.php/$1\">$1</a>");
+			t=t.replace(/\[(.+?)\]/g,"<a href=\"$1\" style=\"padding-left: 0px\"><img src=\"http://wiki.endoftheinter.net/skins/monobook/external.png\"></a>");
+			t=t.replace(/href="\/index\.php/g,"href=\"http://wiki.endoftheinter.net/index.php");
+			t=t.replace(/style=/gi,"");
+			t=t.replace(/<script/gi,"<i");
+			t=t.replace(/(on)([A-Za-z]*)(=)/gi,"");
+			t=t.slice(t.indexOf("<!--- NEW STORIES GO HERE --->")+29);
+			dramas=t.slice(0,t.indexOf("<!--- NEW STORIES END HERE --->"));
+			t=t.slice(t.indexOf("<!--- CHANGE DRAMALINKS COLOR CODE HERE --->"));
+			t=t.slice(t.indexOf("{{")+2);
+			var bgcol=t.slice(0,t.indexOf("}}"));
+			var col;
+			var kermit=false;
+			switch (bgcol.toLowerCase()){
+                case "kermit":
+                    document.getElementById("dramalinks_ticker").style.border="2px solid #990099";
+					bgcol="black";
+					kermit=true;
+                case "black":
+				case "blue":
+				case "green":
+                    col="white";
+					break;
+                default:
+					col="black";
+					break;
+			}
+            if (!kermit)				{
+				dramas="<span style='text-transform:capitalize'>Current Dramalinks Level: <font color='" + bgcol + "'>" + bgcol + "</font></span><div style='background-color: "+bgcol+"; color: "+col+";'>" + dramas.slice(2).replace(/\*/g,"&nbsp;&nbsp;&nbsp;&nbsp;")+"</div>";
+            }else{
+                dramas="Current Dramalinks Level: <blink><font color='" + bgcol + "'>CODE KERMIT</font></blink><div style='background-color: "+bgcol+"; color: "+col+";'>" + dramas.slice(2).replace(/\*/g,"&nbsp;&nbsp;&nbsp;&nbsp;")+"</div>";
+            }
+            drama.txt = dramas;
+            drama.time = new Date().getTime();
+        }
+    }
+    //return drama;
+}
 buildContextMenu();
 
 function handleHttpsRedirect(dest){
@@ -68,6 +116,17 @@ chrome.extension.onRequest.addListener(
                 notification.show();
                 if(cfg.close_notifications){
                     setTimeout(function(){notification.cancel();}, (parseInt(cfg.close_notification_time) * 1000));
+                }
+                break;
+            case "dramalinks":
+                var time = parseInt(new Date().getTime()) + (1800 * 1000);
+                if(drama.time && (drama.time < time)){
+                    console.log('returning cached dramalinks. cache time: ' + drama.time + ' -> ' + time);
+                    sendResponse({"data": drama.txt});
+                }else{
+                    getDrama();
+                    console.log('getting new drama', drama);
+                    sendResponse({"data":drama.txt});
                 }
                 break;
             defaiult:

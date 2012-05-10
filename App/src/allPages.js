@@ -1,3 +1,4 @@
+var config = {};
 var allPages = {
     float_userbar: function(){
         document.getElementsByClassName('menubar')[0].style.position = "fixed";
@@ -13,6 +14,9 @@ var allPages = {
     },
     short_title: function(){
         document.title = document.title.replace(/End of the Internet - /i, '');
+    },
+    dramalinks: function(){
+        commonFunctions.getDrama();
     }
 }
 
@@ -64,10 +68,47 @@ var commonFunctions = {
         }
         newtxt += text + "\n---" + oldtxt[oldtxt.length - 1];
         quickreply.value = newtxt;
+    },
+    getDrama: function(){
+        chrome.extension.sendRequest({need:"dramalinks"}, function(response){
+            commonFunctions.insertDramalinks(response.data, config.hide_dramalinks);
+            if(config.hide_dramalinks) commonFunctions.hideDrama();
+        });
+    },
+    hideDrama: function(){
+        var t = document.getElementById("dramalinks_ticker");
+        if(!t.getElementsByTagName('div')) return;
+        var color = t.getElementsByTagName('div')[0].style.background;
+        document.getElementsByTagName('h1')[0].style.color = color;
+        document.getElementsByTagName('h1')[0].ondblclick = commonFunctions.switchDrama;
+    },
+    switchDrama: function(){
+        document.getElementById("dramalinks_ticker").style.display == 'none' ? document.getElementById("dramalinks_ticker").style.display = 'block': document.getElementById("dramalinks_ticker").style.display = 'none';
+    },
+    insertDramalinks: function(dramas, hide){
+        var divs=document.getElementsByTagName("div");
+        var ticker=document.createElement("center");
+        var update=document.createElement("center");
+        //ticker.innerHTML="Dramalinks loading...";
+        ticker.id="dramalinks_ticker";
+        update.innerHTML="";
+        update.id="dramalinks_update";
+        for (var i=0; i<divs.length; i++){
+            if (divs[i].className=="userbar"){
+                divs[i].parentNode.insertBefore(ticker,divs[i]);
+                divs[i].parentNode.insertBefore(update,divs[i]);
+                break;
+            }
+        }
+        if(hide){
+            document.getElementById("dramalinks_ticker").style.display = 'none';
+        }
+        document.getElementById("dramalinks_ticker").innerHTML=dramas;
     }
 }
     
 chrome.extension.sendRequest({need:"config"}, function(response){
+    config = response.data;
     for(var i in allPages){
             if(response.data[i]){
                 try{
