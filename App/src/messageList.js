@@ -373,7 +373,7 @@ var messageList = {
         var headID = document.getElementsByTagName("head")[0];         
 		var newScript = document.createElement('script');
 		newScript.type = 'text/javascript';
-		newScript.src = chrome.extension.getURL('like.js');
+		newScript.src = chrome.extension.getURL('App/src/like.js');
 		headID.appendChild(newScript);
 		for(var i = 0; document.getElementsByClassName('message-top').item(i); i++){
 			if(document.getElementsByClassName('message-top').item(i).getElementsByTagName('a')[2]){
