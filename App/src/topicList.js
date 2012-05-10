@@ -193,4 +193,3 @@ var topicListHelper = {
 }
 
 topicListHelper.init();
-commonFunctions.getDrama();
