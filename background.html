@@ -131,7 +131,7 @@ chrome.extension.onRequest.addListener(
                     sendResponse({"data":drama.txt});
                 }
                 break;
-            defaiult:
+            default:
                 console.log("Error in request listener - undefined parameter?", request);
                 break;
         }

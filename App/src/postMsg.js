@@ -13,9 +13,8 @@ var postMsg = {
         document.getElementsByTagName('form')[0].insertBefore(ulButton, ulBox);
     },
     post_before_preview: function(){
-        var m = document.getElementsByTagName('form')[0].getElementsByTagName('input');
-        var preview;
-        var post;
+        var post, preview;
+        var m = document.getElementsByTagName('form')[document.getElementsByTagName('form').length - 1].getElementsByTagName('input');
         for(var i = 0; i < m.length; i++){
             if(m[i].name == 'preview'){
                 preview = m[i];
@@ -28,7 +27,7 @@ var postMsg = {
         preview.parentNode.insertBefore(post, preview);
     },
     quickpost_tag_buttons: function(){
-        var m = document.getElementsByTagName('form')[0];
+        var m = document.getElementsByTagName('form')[document.getElementsByTagName('form').length - 1];
         var txt = document.getElementById('u0_25');
         var insM = document.createElement('input');
         insM.value = 'Mod';
@@ -64,7 +63,7 @@ var postMsg = {
         insU.value = 'Underline';
         insU.name = 'Underline';
         insU.type = 'button';
-        insU.addEventListener("click", postMsgHelper.qpTagButtonn, false);
+        insU.addEventListener("click", postMsgHelper.qpTagButton, false);
         insU.id = 'u';
         var insI = document.createElement('input');
         insI.value = 'Italic';
@@ -157,11 +156,11 @@ var postMsgHelper = {
             if(!window.location.href.match('boards')) pm = "_pm";
             for(var i in postMsg){
                 if(config[i + pm]){
-                    //try{
+                    try{
                         postMsg[i]();
-                    //}catch(err){
-                    //    console.log("error in " + i + ":", err);
-                    //}
+                    }catch(err){
+                        console.log("error in " + i + ":", err);
+                    }
                 }
             }
         });

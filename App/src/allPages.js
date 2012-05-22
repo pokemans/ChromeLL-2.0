@@ -77,15 +77,19 @@ var commonFunctions = {
     },
     hideDrama: function(){
         var t = document.getElementById("dramalinks_ticker");
-        if(!t.getElementsByTagName('div')) return;
-        var color = t.getElementsByTagName('div')[0].style.background;
-        document.getElementsByTagName('h1')[0].style.color = color;
-        document.getElementsByTagName('h1')[0].ondblclick = commonFunctions.switchDrama;
+        try{
+            var color = t.getElementsByTagName('div')[0].style.background;
+            document.getElementsByTagName('h1')[0].style.color = color;
+            document.getElementsByTagName('h1')[0].ondblclick = commonFunctions.switchDrama;
+        }catch(e){
+            //dramalinks ticker did not load for some reason, ignore it
+        }
     },
     switchDrama: function(){
         document.getElementById("dramalinks_ticker").style.display == 'none' ? document.getElementById("dramalinks_ticker").style.display = 'block': document.getElementById("dramalinks_ticker").style.display = 'none';
     },
     insertDramalinks: function(dramas, hide){
+        try{
         var divs=document.getElementsByTagName("div");
         var ticker=document.createElement("center");
         var update=document.createElement("center");
@@ -104,6 +108,8 @@ var commonFunctions = {
             document.getElementById("dramalinks_ticker").style.display = 'none';
         }
         document.getElementById("dramalinks_ticker").innerHTML=dramas;
+        }catch(e){
+        }
     }
 }
     

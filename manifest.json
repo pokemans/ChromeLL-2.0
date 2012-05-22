@@ -1,6 +1,6 @@
 {
   "name": "ChromeLL",
-  "version": "2.0.12.510",
+  "version": "2.0.12.523",
   "update_url": "http://www.chairface.org/ext/updates.xml",
   "description": "Enhancements for the forums at the End of the Internet",
   "options_page": "options.html",
@@ -17,7 +17,7 @@
     "js": ["App/src/allPages.js", "App/src/messageList.js"]
   },
   {
-    "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*", "http://boards.endoftheinter.net/showfavorites.php*", "https://boards.endoftheinter.net/showfavorites.php*", "http://archives.endoftheinter.net/search.php*", "https://archives.endoftheinter.net/search.php*", "http://endoftheinter.net/inbox.php*", "https://endoftheinter.net/inbox.php*", "http://boards.endoftheinter.net/search.php*", "https://boards.endoftheinter.net/search.php*"],
+    "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*", "http://boards.endoftheinter.net/showfavorites.php*", "https://boards.endoftheinter.net/showfavorites.php*", "http://archives.endoftheinter.net/search.php*", "https://archives.endoftheinter.net/search.php*", "http://endoftheinter.net/inbox.php*", "https://endoftheinter.net/inbox.php*", "http://boards.endoftheinter.net/search.php*", "https://boards.endoftheinter.net/search.php*", "http://endoftheinter.net/main.php", "https://endoftheinter.net/main.php"],
     "js": ["App/src/allPages.js", "App/src/topicList.js"] 
   },
   {

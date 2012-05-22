@@ -18,6 +18,28 @@ var messageList = {
         });
         messageListHelper.addNotebox(document.getElementsByClassName('message-top'));
     },
+    foxlinks_quotes: function(){
+        var mcol = "#" + config['foxlinks_quotes_color'];
+        var m = document.getElementsByClassName('quoted-message');
+        var n;
+        for(var i = 0; m[i]; i++){
+			m[i].style.borderStyle = 'solid';
+            m[i].style.borderWidth = '2px';
+            m[i].style.borderRadius = '5px';
+            m[i].style.marginRight = '30px';
+            m[i].style.marginLeft = '10px';
+            m[i].style.paddingBottom = '10px';
+            m[i].style.marginTop = '0px';
+            m[i].style.borderColor = mcol;
+            n = m[i].getElementsByClassName('message-top')[0];
+            if(n.style.background == ''){
+                n.style.background = mcol;
+            }		
+            n.style.marginTop = '0px';
+            n.style.paddingBottom = '2px';
+            n.style.marginLeft = '-6px';
+        }
+    },
     ignorator_messagelist: function(){
         if(!config.ignorator) return;
         var s;
@@ -85,6 +107,7 @@ var messageList = {
     },
     post_title_notification: function(){
         document.addEventListener('scroll', messageListHelper.clearUnreadPosts);
+        document.addEventListener('mousemove', messageListHelper.clearUnreadPosts);
     },
     quickpost_on_pgbottom: function(){
         //from foxlinks
@@ -401,16 +424,32 @@ var messageList = {
         if(!config.enable_user_highlight) return;
         var messages = document.getElementsByClassName('message-container');
         var user;
-        for(var i = 0; messages[i]; i++){
-            user = messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
-            if(config.user_highlight_data[user]){
-                if(config.debug) console.log('highlighting post by ' + user);
-                messages[i].getElementsByClassName('message-top')[0].style.background = '#' + config.user_highlight_data[user].bg;
-                messages[i].getElementsByClassName('message-top')[0].style.color = '#' + config.user_highlight_data[user].color;
-                for(var j = 0; messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[j]; j++){
-                    messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+        if(!config.no_user_highlight_quotes){
+            for(var i = 0; messages[i]; i++){
+                for(var k = 0; messages[i].getElementsByClassName('message-top')[k]; k++){
+                    user = messages[i].getElementsByClassName('message-top')[k].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                    if(config.user_highlight_data[user]){
+                        if(config.debug) console.log('highlighting post by ' + user);
+                        messages[i].getElementsByClassName('message-top')[k].style.background = '#' + config.user_highlight_data[user].bg;
+                        messages[i].getElementsByClassName('message-top')[k].style.color = '#' + config.user_highlight_data[user].color;
+                        for(var j = 0; messages[i].getElementsByClassName('message-top')[k].getElementsByTagName('a')[j]; j++){
+                            messages[i].getElementsByClassName('message-top')[k].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+                        }
+                    }
                 }
-            }                
+            }
+        }else{
+            for(var i = 0; messages[i]; i++){
+                user = messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                if(config.user_highlight_data[user]){
+                    if(config.debug) console.log('highlighting post by ' + user);
+                    messages[i].getElementsByClassName('message-top')[0].style.background = '#' + config.user_highlight_data[user].bg;
+                    messages[i].getElementsByClassName('message-top')[0].style.color = '#' + config.user_highlight_data[user].color;
+                    for(var j = 0; messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[j]; j++){
+                        messages[i].getElementsByClassName('message-top')[0].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+                    }
+                }
+            }
         }
     }
 }
@@ -616,9 +655,11 @@ var messageListHelper = {
     },
     livelinks: function(evt){
         if (!evt.target.getElementsByClassName) return;
+        var pm = '';
+        if(window.location.href.match('inboxthread')) pm = "_pm";
         if (evt.target.getElementsByClassName("message-top")[0]){
             for(var i in messageListLivelinks){
-                if(config[i]){
+                if(config[i + pm]){
                     try{
                         messageListLivelinks[i](evt.target);
                     }catch(err){
@@ -661,6 +702,7 @@ var messageListLivelinks = {
         messageListHelper.addNotebox(el.getElementsByClassName('message-top'));
     },
     post_title_notification: function(el){
+        if(el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML == document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].innerHTML.replace(/ \((\d+)\)$/, "")) return;
         var posts = 1;
         if(document.title.match(/\(\d+\)/)){
             posts = parseInt(document.title.match(/\((\d+)\)/)[1]);
@@ -671,6 +713,7 @@ var messageListLivelinks = {
     },
     notify_quote_post: function(el){
         if(!el.getElementsByClassName('quoted-message')) return;
+        if(el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML == document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].innerHTML.replace(/ \((\d+)\)$/, "")) return;
         var not = false;
         var msg = el.getElementsByClassName('quoted-message');
         for(var i = 0; msg[i]; i++){
@@ -688,6 +731,11 @@ var messageListLivelinks = {
             el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].style.color = '#' + config.tc_highlight_color;
         }
     },
+    like_button: function(el){
+        if(el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[2]){
+            el.getElementsByClassName('message-top')[0].innerHTML += ' | <a href="##like" onclick="like(this);">Like</a>';
+        }
+    },
     number_posts: function(el){
         var lastPost = document.getElementsByClassName('PostNumber')[document.getElementsByClassName('PostNumber').length - 1];
         var number = lastPost.innerHTML.match(/#(\d+)/)[1];
@@ -698,15 +746,33 @@ var messageListLivelinks = {
     },
     userhl_messagelist: function(el){
         if(!config.enable_user_highlight) return;
-        var user = el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
-        if(config.user_highlight_data[user]){
-            el.getElementsByClassName('message-top')[0].style.background = '#' + config.user_highlight_data[user].bg;
-            el.getElementsByClassName('message-top')[0].style.color = '#' + config.user_highlight_data[user].color;
-            for(var i = 0; el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[i]; i++){
-                el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[i].style.color = '#' + config.user_highlight_data[user].color;
+        if(!config.no_user_highlight_quotes){
+            for(var k = 0; el.getElementsByClassName('message-top')[k]; k++){
+                user = el.getElementsByClassName('message-top')[k].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                if(config.user_highlight_data[user]){
+                    if(config.debug) console.log('highlighting post by ' + user);
+                    el.getElementsByClassName('message-top')[k].style.background = '#' + config.user_highlight_data[user].bg;
+                    el.getElementsByClassName('message-top')[k].style.color = '#' + config.user_highlight_data[user].color;
+                    for(var j = 0; el.getElementsByClassName('message-top')[k].getElementsByTagName('a')[j]; j++){
+                        el.getElementsByClassName('message-top')[k].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+                    }
+                    if(k == 0 && config.notify_userhl_post && el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML != document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].innerHTML.replace(/ \((\d+)\)$/, "")){
+                        chrome.extension.sendRequest({need:"notify", message:document.title.replace(/End of the Internet - /i, ''), title:"Post by " + el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML}, function(data){ console.log(data); });
+                    }
+                }
             }
-            if(config.notify_userhl_post){
-                chrome.extension.sendRequest({need:"notify", message:document.title.replace(/End of the Internet - /i, ''), title:"Post by " + el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML}, function(data){ console.log(data); });
+        }else{
+            user = el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+            if(config.user_highlight_data[user]){
+                if(config.debug) console.log('highlighting post by ' + user);
+                el.getElementsByClassName('message-top')[0].style.background = '#' + config.user_highlight_data[user].bg;
+                el.getElementsByClassName('message-top')[0].style.color = '#' + config.user_highlight_data[user].color;
+                for(var j = 0; el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[j]; j++){
+                    el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+                }
+                if(config.notify_userhl_post && el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML != document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].innerHTML.replace(/ \((\d+)\)$/, "")){
+                    chrome.extension.sendRequest({need:"notify", message:document.title.replace(/End of the Internet - /i, ''), title:"Post by " + el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML}, function(data){ console.log(data); });
+                }
             }
         }
     }

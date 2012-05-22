@@ -1071,6 +1071,12 @@ function restoreV1Cfg(){
                                     <span>Enable user highlighing for posts</span>
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="no_user_highlight_quotes" />
+                                    <span>Disable user highlighting on quotes</span>
+                                </label>
+                            </div>
                         </div>
                     </section>
                     <section>
@@ -1135,7 +1141,11 @@ function restoreV1Cfg(){
                             </div>
                             <div class="checkbox">
                                 <input type="checkbox" id="label_tc" />
-                                <span>Show <b>TC</b> next to the TC's username color <input type="text" id="tc_label_color" class="color-input" /></span>
+                                <span>Show <b>TC</b> next to the TC's username color <input type="text" id="tc_label_color" class="color color-input" /></span>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="foxlinks_quotes" />
+                                <span>Foxlinks style quotes color <input type="text" id="foxlinks_quotes_color" class="color-input" /> (set this to <a href="http://endoftheinter.net/colors.php">main color 3</a>)</span>
                             </div>
                         </div>
                     </section>
@@ -1338,4 +1348,5 @@ function restoreV1Cfg(){
 		</div>
 	</div>
 </div>
+</body>
 </html>
