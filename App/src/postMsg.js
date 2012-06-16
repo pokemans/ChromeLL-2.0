@@ -12,6 +12,9 @@ var postMsg = {
         document.getElementsByTagName('form')[0].insertBefore(ulBox, null);
         document.getElementsByTagName('form')[0].insertBefore(ulButton, ulBox);
     },
+    foxlinks_quotes: function(){
+        commonFunctions.foxlinks_quote();
+    },
     post_before_preview: function(){
         var post, preview;
         var m = document.getElementsByTagName('form')[document.getElementsByTagName('form').length - 1].getElementsByTagName('input');

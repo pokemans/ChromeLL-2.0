@@ -1,0 +1,269 @@
+<html>
+<head>
+<link rel="stylesheet" href="/Style/css/config/button.css" />
+<link rel="stylesheet" href="/Style/css/config/select.css" />
+<style type="text/css">
+body{
+	font-family:verdana, helvetica, sans-serif;
+	width:200;
+	background:#fff;
+	color:#000;
+}
+a{
+	text-decoration:none;
+	font-size: 12px;
+	color:#000;
+}
+a:hover{
+	color:#999;
+}
+h1{
+	font-size:14px;
+	text-decoration: underline;
+}
+#js_insert{
+    width: 100%;
+    font-size: 12px;
+}
+.info{
+	font-size:10px;
+}
+.links{
+    padding-bottom: 20px;
+}
+.rm_num{
+    position: relative;
+    font-size: 10px;
+    margin-right: 4px;
+    border-radius: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-style: normal;
+    border: 1px solid #000;
+}
+.user_ignore{
+    width: 100%;
+    padding: 2px;
+    position: relative;
+    border-radius: 4px;
+    background: #ff8fb8;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+.keyword_ignore{
+    width: 100%;
+    padding: 2px;
+    position: relative;
+    border-radius: 4px;
+    background: #f8ff91;
+    margin-bottom: 5px;
+    font-style: italic;
+}
+#doptions{
+    position: fixed;
+    left: 2%;
+    bottom: 2%;
+    width: 100%;
+}
+.line{
+	margin-top:2px;
+	z-index:999;
+	background:#999;
+	width:100%;
+	height:1px;
+}
+.warn{
+	font-size: 12px;
+}
+</style>
+<script type="text/javascript" src="/App/src/popup.js"></script>
+</head>
+<body>
+<div class="info">search LUE</div>
+<form name="lue_search" action="http://boards.endoftheinter.net/search.php" method="get" target="_new">
+<input type="text" name="s_aw" style="width: 100%">
+<input type="text" name="board" value="42" style="display: none">
+<input type="submit" name="submit" value="Submit" style="display: none">
+</form>
+<form name="boards"><!--action="http://boards.endoftheinter.net/showtopics.php" method="get" target="_new"-->
+<select id="board_select" name="board" style="width: 100%">
+<option value="-1">
+Select a Board</option>
+<option value="42">
+Life, the Universe and Everything </option>
+<option value="444">
+Humans Anonymous </option>
+<option value="58">
+Mostly Harmless </option>
+<option value="51">
+Pipe Mania </option>
+<option value="73">
+Fitness </option>
+<option value="419">
+LL Mart </option>
+<option value="75">
+Music </option>
+<option value="54494">
+Referral Mania </option>
+<option value="74">
+Relation Ship </option>
+<option value="78">
+Requests </option>
+<option value="76">
+Sports </option>
+<option value="77">
+Strong Homo </option>
+<option value="46">
+Anime </option>
+<option value="47">
+Computers </option>
+<option value="30000">
+Flamers </option>
+<option value="71">
+Homework </option>
+<option value="48">
+Media and Entertainment </option>
+<option value="69">
+Porn </option>
+<option value="53">
+Hentai Paradise </option>
+<option value="55">
+Requests </option>
+<option value="43">
+Peer to Peer </option>
+<option value="70">
+Requests </option>
+<option value="52">
+Video Games </option>
+<option value="44">
+ROMs </option>
+<option value="56">
+Complaints Department </option>
+<option value="45">
+Site Suggestions </option>
+<option value="1">
+The Land of Lost Topics </option>
+<option value="60">
+Cooler People </option>
+<option value="61">
+Coolest People </option>
+<option value="62">
+Coolest(er) People </option>
+<option value="63">
+Absolute Zero </option>
+<option value="-2583092">
+Flower Power </option>
+<option value="2600">
+LUEtari 2600 </option>
+<option value="-85">
+Moderator Social </option>
+<option value="-86">
+Suspensions and Bans </option>
+<option value="-84">
+The Cheese Factory </option>
+<option value="54">
+LUEshi </option>
+<option value="38">
+Meat </option>
+<option value="57">
+Suicide </option>
+<option value="8675309">Jenny</option><option value="
+662">
+IBKM</option><option value="
+545">
+The Board of Hopeless Fate</option><option value="17074">
+AnotherGamer's Pit of...</option><option value="-2700">
+I Didn't Win!</option><option value="
+5749">
+Starcraft (board)</option><option value="
+1234">
+Guam</option><option value="
+1691">
+EUGWNGOPWTMDC</option><option value="
+2112">
+The Bethlehem Disco</option><option value="
+100">
+Alexander's Place</option><option value="
+1024">
+The RevoLUEtion</option><option value="
+98">
+Jawsome.</option><option value="
+8000">
+LUE Radio</option><option value="
+19">
+Trapped in a Fox Suit</option><option value="
+241">
+Treasure Chest Of Lust...</option><option value="
+9999">
+Elder Scrolls Cove</option><option value="
+800">
+Jelly Soup's Toybox</option><option value="
+333">
+S.S. MORE POWERFUL...</option><option value="
+777">
+Top Secret Area</option><option value="
+917">
+The Knights TempLUEr</option><option value="
+555">
+Another Castle</option><option value="
+6191">
+Use Bombs Wisely</option><option value="
+328">
+MRG Land</option><option value="
+6700">
+Mystikal Bomb</option><option value="
+152">
+Panel de Pon</option><option value="
+-666">
+Shahin</option><option value="
+1908">
+I HEART U</option><option value="
+1999">
+CS 1.6 League</option><option value="
+5674684">
+LUE Funmaps</option><option value="
+204">
+Mostly Harmless</option><option value="
+1338">
+The Back-Up Internets</option><option value="
+255">
+Game Over</option><option value="
+24">
+Counter-Terrorist Unit</option><option value="
+123321">
+Lawrence</option><option value="
+11111101">
+The Starlight Theater</option><option value="
+1027">
+Zoot Allures</option><option value="
+268170">
+The Bebop</option><option value="
+212">
+Jesus Ranch</option><option value="
+524">Without a Cause's Lair...</option>
+<option value="
+604753">
+HaLUE</option><option value="
+18">The World That I Know</option>
+</select>
+</form>
+<div id="js_insert"></div>
+<br />
+<div class="info">quick links</div><center><div class="links">
+<a href="http://boards.endoftheinter.net/showtopics.php?board=42" target="_new">LUE</a> |
+<a href="http://boards.endoftheinter.net/showtopics.php?board=51" target="_new">PM</a> |
+<a href="http://boards.endoftheinter.net/showtopics.php?board=58" target="_new">MH</a> |
+<a href="http://boards.endoftheinter.net/showtopics.php?board=444" target="_new">HA</a> |
+<a href="http://boards.endoftheinter.net/history.php" id="a_msg_history" target="_new">HIST</a>
+</div>
+</center>
+<div id="doptions"><div class="line"></div><a href="#" id="options">Options</a></div><!--
+<hr>
+<div class="clisttitle">online:</div>
+<div class="chatlist" style="font-size: 12px; color: #000"></div>
+<form name="msg_send" action="##" onsubmit="postMsg(); return false;">
+<input type="text" style="width: 20%;" name="to"><input type="text" name="msg" style="width: 80%">
+<input type="submit">
+</form>-->
+</body>
+</html>

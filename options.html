@@ -562,208 +562,9 @@ span.desc {
 <link rel="stylesheet" href="Style/css/config/colorpicker.css">
 <script type="text/javascript" src="App/Lib/Ext/jquery.js"></script>
 <script type="text/javascript" src="App/Lib/Ext/jqUi.js"></script>
+<script type="text/javascript" src="App/src/options.js"></script>
 <script type="text/javascript" src="App/Lib/Ext/colorpicker.js"></script>
 <script type="text/javascript" src="App/src/allBg.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-    $('.options_navigation_link').click(function() {
-		toLink = $(this).attr('id').split('_link')[0];
-		
-		selectedPage = $('.navbar-item-selected').attr("id").split('_link')[0];
-		
-		if( toLink == selectedPage ) {
-			// Already on the page, clicking does not refresh the page!
-			return true;
-		}
-		
-		$('#' + selectedPage + '_link').removeClass("navbar-item-selected");
-		$('#' + toLink + '_link').addClass("navbar-item-selected");
-		
-		$('#' + selectedPage + '_page').removeClass("shown").addClass("hidden");
-		$('#' + toLink + '_page').removeClass("hidden").addClass("shown");
-		
-		if( toLink == "supersecretabout" ) {
-			$('body').css("background-color", "#000");
-		} else {
-			$('body').css("background-color", "transparent");
-		}
-	});
-    // restore config settings
-    if(localStorage['ChromeLL-Config'] == '' || localStorage['ChromeLL-Config'] == undefined){
-        console.log("Blank Config. Rebuilding");
-        localStorage['ChromeLL-Config'] = '{}';
-        if(localStorage['chromeLL_userhighlight'] && localStorage['chromeLL_userhighlight'] != '') restoreV1Cfg();
-        else restoreConfig();
-    }else{
-        restoreConfig();
-    }
-});
-
-function restoreConfig(){
-    console.log('loading config');
-    var config = JSON.parse(localStorage['ChromeLL-Config']);
-    var checkboxes = $(":checkbox");
-    for(var i in checkboxes){
-        checkboxes[i].checked = config[checkboxes[i].id];
-    }
-    var textboxes = $(":text");
-    for(var i in textboxes){
-        if(textboxes[i].name && textboxes[i].name.match('(user|keyword)_highlight_')){
-            //console.log('found a textbox to ignore: ' + textboxes[i]);
-        }else if(config[textboxes[i].id]){
-            textboxes[i].value = config[textboxes[i].id];
-        }
-    }
-    for(var j in config.user_highlight_data){
-        document.getElementsByClassName('user_name')[document.getElementsByClassName('user_name').length - 1].value = j;
-        document.getElementsByClassName('header_bg')[document.getElementsByClassName('header_bg').length - 1].value = config.user_highlight_data[j].bg;
-        document.getElementsByClassName('header_color')[document.getElementsByClassName('header_color').length - 1].value = config.user_highlight_data[j].color;
-        addUserHighlightDiv();
-    }
-    for(var j = 0; config.keyword_highlight_data[j]; j++){
-        document.getElementsByClassName('keyword')[document.getElementsByClassName('keyword').length - 1].value = config.keyword_highlight_data[j].match;
-        document.getElementsByClassName('keyword_bg')[document.getElementsByClassName('keyword_bg').length - 1].value = config.keyword_highlight_data[j].bg;
-        document.getElementsByClassName('keyword_color')[document.getElementsByClassName('keyword_color').length - 1].value = config.keyword_highlight_data[j].color;
-        addKeywordHighlightDiv();
-    }
-    //add a listener to add userhighlight boxes
-    document.addEventListener('keyup', function(evt){
-        if(!evt.target.name) return;
-        if(evt.target.name == "user_highlight_username"){
-            var datas = document.getElementById('user_highlight').getElementsByClassName('user_name');
-            var empty = false;
-            for(var i = 1; datas[i]; i++){
-                if(datas[i].value == '') empty = true;
-            }
-            if(!empty) addUserHighlightDiv();
-        }
-        if(evt.target.name == "keyword_highlight_keyword"){
-            var datas = document.getElementById('keyword_highlight').getElementsByClassName('keyword');
-            var empty = false;
-            for(var i = 1; datas[i]; i++){
-                if(datas[i].value == '') empty = true;
-            }
-            if(!empty) addKeywordHighlightDiv();
-        }
-    });
-    
-    // show version
-    var app = chrome.app.getDetails();
-    document.getElementById('version').innerText = app.version;
-    
-    setColorPicker();
-    saveConfig();
-}
-function setColorPicker(){
-    $('.color').ColorPicker({onChange: function(hsb, hex, rgb, el) {
-        el.value = hex;
-        saveConfig();
-	},
-    onSubmit: function(hsb, hex, rgb, el) {
-		$(el).val(hex);
-		$(el).ColorPickerHide();
-        saveConfig();
-	},
-    livePreview: true,
-    color: "",
-    onBeforeShow: function () {
-		$(this).ColorPickerSetColor(this.value);
-	}});
-}
-
-$(document).change(saveConfig);
-document.addEventListener('keyup', saveConfig);
-
-function addUserHighlightDiv(){
-    var ins = document.getElementById('user_highlight').getElementsByClassName('user_name')[0].parentNode.parentNode.cloneNode(true);
-    ins.className = "user_highlight_data";
-    ins.style.display = "block";
-    document.getElementById('user_highlight').insertBefore(ins, null);
-    setColorPicker();
-}
-function addKeywordHighlightDiv(){
-    var ins = document.getElementById('keyword_highlight').getElementsByClassName('keyword')[0].parentNode.parentNode.cloneNode(true);
-    ins.className = "keyword_highlight_data";
-    ins.style.display = "block";
-    document.getElementById('keyword_highlight').insertBefore(ins, null);
-    setColorPicker();
-}
-function saveConfig(){
-    var cfg = JSON.parse(localStorage['ChromeLL-Config']);
-    inputs = $(":checkbox");
-    for(var i in inputs){
-        cfg[inputs[i].id] = inputs[i].checked;
-    }
-    var textboxes = $(":text");
-    for(var i in textboxes){
-        if(textboxes[i].name && textboxes[i].name.match('user_highlight_')){
-            //textboxes[i].ColorPicker();
-        }else{
-            cfg[textboxes[i].id] = textboxes[i].value;
-        }
-    }
-    var userhlData = document.getElementById('user_highlight').getElementsByClassName('user_highlight_data');
-    var name;
-    cfg.user_highlight_data = {};
-    for(var i = 0; userhlData[i]; i++){
-        name = userhlData[i].getElementsByClassName('user_name')[0].value.toLowerCase();
-        if(name != ''){
-            cfg.user_highlight_data[name] = {};
-            cfg.user_highlight_data[name].bg = userhlData[i].getElementsByClassName('header_bg')[0].value;
-            userhlData[i].getElementsByClassName('user_name')[0].style.background = '#' + cfg.user_highlight_data[name].bg;
-            cfg.user_highlight_data[name].color = userhlData[i].getElementsByClassName('header_color')[0].value;
-            userhlData[i].getElementsByClassName('user_name')[0].style.color = '#' + cfg.user_highlight_data[name].color;
-        }
-    }
-    userhlData = document.getElementById('keyword_highlight').getElementsByClassName('keyword_highlight_data');
-    cfg.keyword_highlight_data = {};
-    var j = 0;
-    for(var i = 0; userhlData[i]; i++){
-        name = userhlData[i].getElementsByClassName('keyword')[0].value.toLowerCase();
-        if(name != ''){
-            cfg.keyword_highlight_data[j] = {};
-            cfg.keyword_highlight_data[j].match = name;
-            cfg.keyword_highlight_data[j].bg = userhlData[i].getElementsByClassName('keyword_bg')[0].value;
-            userhlData[i].getElementsByClassName('keyword')[0].style.background = '#' + cfg.keyword_highlight_data[j].bg;
-            cfg.keyword_highlight_data[j].color = userhlData[i].getElementsByClassName('keyword_color')[0].value;
-            userhlData[i].getElementsByClassName('keyword')[0].style.color = '#' + cfg.keyword_highlight_data[j].color;
-            j++;
-        }
-    }
-    localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
-    allBg.init_listener(cfg);
-}
-
-function restoreV1Cfg(){
-    var cfg = JSON.parse(localStorage['ChromeLL-Config']);
-    var hls = localStorage['chromeLL_userhighlight'].split(';');
-    var hl = Array();
-    cfg.user_highlight_data = {};
-    for(var i = 0; hls[i]; i++){
-        hl = hls[i].split(':');
-        console.log(hl[0]);
-        cfg.user_highlight_data[hl[0]] = {};
-        cfg.user_highlight_data[hl[0]].bg = hl[1];
-        cfg.user_highlight_data[hl[0]].color = hl[3];
-    }
-    localStorage['chromeLL_userhighlight'] = '';
-    var boolSettings = {"force_https":"chromeLL_forcehttps",
-                        "short_title":"chromeLL_shorttitle",
-                        "float_userbar":"chromeLL_floatbars",
-                        "ignorator":"chromeLL_ignoretopicsbyon",
-                        "ignorator_list":"chromeLL_ignoretopicsby",
-                        "enable_user_highlight":"chromeLL_userhighlighton",
-                        "number_posts":"chromeLL_numberposts"}
-    //for(var i in boolSettings){
-    //    if(localStorage[boolSettings[i]] == "true") cfg[i] = true;
-    //}
-    cfg.ignorator_list = localStorage['chromeLL_ignoretopicsby'];
-    cfg.ignore_keyword_list = localStorage['chromeLL_ignoretopics'];
-    console.log(cfg);
-    localStorage['ChromeLL-Config'] = JSON.stringify(cfg);                   
-    restoreConfig();
-}
-</script>
 <body>
 <div class="header"></div>
 <div id="main-content">
@@ -795,6 +596,14 @@ function restoreV1Cfg(){
 									<span>Keep the Userbar + Menubar at the top of the screen</span>
 								</label>
 							</div>
+                            <!--
+                            <div class="checkbox">
+								<label>
+									<input type="checkbox" id="float_userbar_bottom" />
+									<span>Keep the Userbar + Menubar at the bottom of the screen</span>
+								</label>
+							</div>
+                            -->
                             <div class="checkbox">
 								<label>
 									<input type="checkbox" id="short_title" />
@@ -809,16 +618,38 @@ function restoreV1Cfg(){
 							</div>
                             <div class="checkbox">
 								<label>
+									<input type="checkbox" id="remove_links" />
+									<span>Remove unnecessary links from the menubar</span>
+								</label>
+							</div>
+                            <div class="checkbox">
+								<label>
 									<input type="checkbox" id="dramalinks" />
 									<span>Show the dramalinks ticker</span>
 								</label>
                             </div>
-                            <div>
+                            <div class="checkbox">
                                 <label>
 									<input type="checkbox" id="hide_dramalinks" />
 									<span>Double click board name to show dramalinks ticker</span>
 								</label>
 							</div>
+                            <div class="checkbox">
+                                <label>
+									<input type="checkbox" id="hide_dramalinks_topiclist" />
+									<span>Only show the dramalinks ticker on the topic list</span>
+								</label>
+							</div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="user_info_popup" />
+                                    <span>Double click box surrounding username for settings popup</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+									<input type="checkbox" id="zebra_tables" />
+									<span>Zebra tables color <input type="text" id="zebra_tables_color" class="color" style="width: 70px" value="D7DEE8" /></span>
+                            </div>
 						</div>
 					</section>
 					
@@ -854,7 +685,7 @@ function restoreV1Cfg(){
 						<div>
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" id="ignorator" onclick="document.getElementById('ignorator_messagelist').checked = this.checked; document.getElementById('ignorator_topiclist').checked = this.checked; saveConfig();" />
+									<input type="checkbox" id="ignorator" />
 									<span>Ignore topics and/or posts by users listed below (comma separated list)</span>
 								</label>
 							</div>
@@ -866,7 +697,7 @@ function restoreV1Cfg(){
 						<div>
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" id="enable_user_highlight" onclick="document.getElementById('userhl_messagelist').checked = this.checked; document.getElementById('userhl_topiclist').checked = this.checked; saveConfig();"/>
+									<input type="checkbox" id="enable_user_highlight" />
 									<span>Highlight users listed below</span>
 								</label>
                                 <br />
@@ -1094,6 +925,12 @@ function restoreV1Cfg(){
                                     <span>Send a notification when I am quoted</span>
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="new_page_notify" />
+                                    <span>Send a notification when a new page is created</span>
+                                </label>
+                            </div>
                         </div>
                     </section>
                     <section>
@@ -1145,7 +982,7 @@ function restoreV1Cfg(){
                             </div>
                             <div class="checkbox">
                                 <input type="checkbox" id="foxlinks_quotes" />
-                                <span>Foxlinks style quotes color <input type="text" id="foxlinks_quotes_color" class="color-input" /> (set this to <a href="http://endoftheinter.net/colors.php">main color 3</a>)</span>
+                                <span>Foxlinks style quotes color #<input type="text" id="foxlinks_quotes_color" class="color-input" /> (set this to <a href="http://endoftheinter.net/colors.php">main color 3</a>)</span>
                             </div>
                         </div>
                     </section>
@@ -1182,6 +1019,44 @@ function restoreV1Cfg(){
                                     <span>Drag images onto reply text area to upload</span>
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="post_templates" />
+                                    <span>Preformatted post templates</span>
+                                </label>
+                            </div>
+                            <br />
+                            <div style="font-size: small!important; margin-left: 17px; margin-top: -10px;">
+									<div class="columns" style="overflow: hidden;">
+										<div style="float: left; width: 257px; margin-right: 20px;">
+											Text:<br />
+											
+                                        </div>
+                                        <div style="float: left; width: 80px; margin-right: 20px;">
+											Title:<br />
+											
+                                        </div>
+									</div>
+								</div>
+                                <div style="font-size: small!important; margin-left: 17px;" id="post_template" >
+									<div class="columns post_template_data_blank" style="overflow: hidden; display: none;">
+										<div style="float: left; margin-right: 20px;">
+											<textarea style="width: 250px; height: 5em;" class="template_text" name="post_template_text" value=""></textarea>
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="template_title" name="post_template_title" value="" />
+                                        </div>
+									</div>
+                                    <div class="columns post_template_data" style="overflow: hidden;">
+										<div style="float: left; margin-right: 20px;">
+											<textarea style="width: 250px; height: 5em;" class="template_text" name="post_template_text"></textarea>
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="template_title" name="post_template_title" value="" />
+                                        </div>
+									</div>
+								</div>
+                            </div>
                         </div>
                     </section>
 				</div>
@@ -1193,7 +1068,7 @@ function restoreV1Cfg(){
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" id="sort_history" />
-                                    <span>Sort message history by last post in topic</span>
+                                    <span>Sort message history by last post in topic by default</span>
                                 </label>
                             </div>
                             <div class="checkbox">
@@ -1243,18 +1118,6 @@ function restoreV1Cfg(){
                                     <span>Click to expand thumbnailed images</span>
                                 </label>
                             </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="batch_uploader_pm" />
-                                    <span>Show batch upload buttons</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="drop_batch_uploader_pm" />
-                                    <span>Drag images onto reply text area to upload</span>
-                                </label>
-                            </div>
                         </div>
                     </section>
                     <section>
@@ -1270,6 +1133,12 @@ function restoreV1Cfg(){
                                 <label>
                                     <input type="checkbox" id="userhl_messagelist_pm" />
                                     <span>Enable user highlighing for PM messages</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="pm_title_pm" />
+                                    <span>Put username in page title</span>
                                 </label>
                             </div>
                         </div>
@@ -1318,6 +1187,18 @@ function restoreV1Cfg(){
                                     <span>Post button before Preview button</span>
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="batch_uploader_pm" />
+                                    <span>Show batch upload buttons</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="drop_batch_uploader_pm" />
+                                    <span>Drag images onto reply text area to upload</span>
+                                </label>
+                            </div>
                         </div>
                     </section>
 				</div>
@@ -1336,10 +1217,20 @@ function restoreV1Cfg(){
                         </div>
                     </section>
                     <section>
+                        <h3>About</h3>
+                        <div>
+                            Written by <a href="http://endoftheinter.net/profile.php?user=18394">chairface</a><br />
+                            Transloader code by <a href="https://boards.endoftheinter.net/showmessages.php?board=42&topic=7817173">Milan</a><br />
+                            Some dramalinks code is based off of an extension by <a href="http://endoftheinter.net/profile.php?user=10347">freeman</a><br />
+                            "Load [quoted text omitted] on click" code originally by <a href="http://endoftheinter.net/profile.php?user=10295">headbanger</a><br />
+                            Remove unneeded links from the menubar based on code by <a href="http://endoftheinter.net/profile.php?user=5563">citizenray</a>
+                        </div>
+                    </section>
+                    <section>
                         <h3>Misc</h3>
                         <div>
-                            <input type="button" value="Show ChromeLL Config" id="showcfg" onclick="document.getElementById('cfg_ta').value = localStorage['ChromeLL-Config']" />
-                            <input type="button" value="Load ChromeLL Config" id="loadcfg" onclick="if(document.getElementById('cfg_ta').value != ''){ localStorage['ChromeLL-Config'] = document.getElementById('cfg_ta').value; location.reload();}" />
+                            <input type="button" value="Show ChromeLL Config" id="showcfg" />
+                            <input type="button" value="Load ChromeLL Config" id="loadcfg" />
                             <textarea id="cfg_ta" style="width: 100%; height: 300px; border: none;"></textarea>
                         </div>
                     </section>

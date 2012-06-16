@@ -1,23 +1,34 @@
-var config;
+var config = {};
+var ignorated = {total_ignored: 0, data:{users:{},keywords:{}}};
 var topicList = {
     ignorator_topiclist: function(){
         if(!config.ignorator) return;
         var s;
         var ignores = config.ignorator_list.split(',');
         ignores = topicListHelper.handleCsv(ignores);
+        if(config.debug) console.log(ignores);
         var g = document.getElementsByTagName('tr');
         var title;
         for(var i = 1; g[i]; i++){
             if(g[i].getElementsByTagName('td')[1]){
+                g[i].className = "live_tr";
                 title = g[i].getElementsByTagName('td')[1];
                     for(var f = 0; f < ignores.length; f++){
                         if(title.getElementsByTagName('a')[0].innerHTML.toLowerCase() == ignores[f]){
                             if(config.debug) console.log('found topic to remove: \"' + g[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase() + "\" author: " + ignores[f] + " topic: " + i);
-                            title.parentNode.style.display = 'none';				
+                            title.parentNode.style.display = 'none';
+                            title.parentNode.className = "hidden_tr";
+                            ignorated.total_ignored++;
+                            if(!ignorated.data.users[ignores[f]]){
+                                ignorated.data.users[ignores[f]] = 1;
+                            }else{
+                                ignorated.data.users[ignores[f]]++;
+                            }
                         }
                     }
             }
         }
+        topicListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated});
     },
     ignore_keyword: function(){
         if(config.ignore_keyword_list == "" || config.ignore_keyword_list == undefined) return;
@@ -32,6 +43,11 @@ var topicList = {
             keywords = topicListHelper.handleCsv(keywords);
         }
         if(config.debug) console.log(keywords);
+        if(document.getElementsByClassName('live_tr').length === 0){
+            for(var i = 0; document.getElementsByTagName('tr')[i]; i++){
+                document.getElementsByTagName('tr')[i].className = 'live_tr';
+            }
+        }
         var g = topicListHelper.getTopics();
         var title;
         var match = false;
@@ -48,16 +64,24 @@ var topicList = {
                             }
                             match = title.getElementsByTagName('a')[0].innerHTML.match(reg);
                         }else{
-                            match = title.getElementsByTagName('a')[0].innerHTML.toLowerCase().match(keywords[f].toLowerCase());
+                            match = title.getElementsByTagName('a')[0].innerHTML.toLowerCase().indexOf(keywords[f].toLowerCase()) != -1;
                         }
                         if(match){
                             if(config.debug) console.log('found topic to remove: \"' + g[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase() + "\" keyword: " + keywords[f] + " topic: " + i);
                             title.parentNode.style.display = 'none';
+                            title.parentNode.className = "hidden_tr";
+                            ignorated.total_ignored++;
+                            if(!ignorated.data.keywords[keywords[f]]){
+                                ignorated.data.keywords[keywords[f]] = 1;
+                            }else{
+                                ignorated.data.keywords[keywords[f]]++;
+                            }
                             //break;
                         }
                     }
             }
         }
+        topicListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated});
     },
     page_jump_buttons: function(){
         var trs = topicListHelper.getTopics();
@@ -113,7 +137,7 @@ var topicList = {
                         match = title.match(reg);
                     }else{
                         reg = keys[j].match[k].toLowerCase();
-                        match = title.toLowerCase().match(reg);
+                        match = title.toLowerCase().indexOf(reg) != -1;
                     }
                     if(match){
                         topics[i].getElementsByTagName('td')[0].style.background = '#' + keys[j].bg;
@@ -132,17 +156,38 @@ var topicList = {
         var topics = topicListHelper.getTopics();
         var user;
         for(var i = 1; topics[i]; i++){
-            user = topics[i].getElementsByTagName('td')[1].getElementsByTagName('a')[0].innerHTML.toLowerCase();
-            if(config.user_highlight_data[user]){
-                if(config.debug)  console.log('highlighting topic by ' + user);
-                for(var j = 0; topics[i].getElementsByTagName('td')[j]; j++){
-                    topics[i].getElementsByTagName('td')[j].style.background = '#' + config.user_highlight_data[user].bg;
-                    topics[i].getElementsByTagName('td')[j].style.color = '#' + config.user_highlight_data[user].color;
-                }
-                for(var j = 0; topics[i].getElementsByTagName('a')[j]; j++){
-                    topics[i].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+            if(topics[i].getElementsByTagName('td')[1].getElementsByTagName('a')[0]){
+                user = topics[i].getElementsByTagName('td')[1].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                if(config.user_highlight_data[user]){
+                    if(config.debug)  console.log('highlighting topic by ' + user);
+                    for(var j = 0; topics[i].getElementsByTagName('td')[j]; j++){
+                        topics[i].getElementsByTagName('td')[j].style.background = '#' + config.user_highlight_data[user].bg;
+                        topics[i].getElementsByTagName('td')[j].style.color = '#' + config.user_highlight_data[user].color;
+                    }
+                    for(var j = 0; topics[i].getElementsByTagName('a')[j]; j++){
+                        topics[i].getElementsByTagName('a')[j].style.color = '#' + config.user_highlight_data[user].color;
+                    }
+                    topics[i].className = 'highlighted_tr';
                 }
             }
+        }
+    },
+    zebra_tables: function(){
+        var trs;
+        if(document.getElementsByClassName('live_tr').length !== 0){
+            trs = document.getElementsByClassName('grid')[0].getElementsByClassName('live_tr');
+            var i = 0;
+        }else{
+            trs = document.getElementsByClassName('grid')[0].getElementsByTagName('tr');
+            var i = 1;
+        }
+        while(trs[i]){
+            if(i % 2 === 0){
+                for(var j = 0; trs[i].getElementsByTagName('td')[j]; j++){ 
+                    if(trs[i].getElementsByTagName('td')[j].style.background === '') trs[i].getElementsByTagName('td')[j].style.background = '#' + config.zebra_tables_color;
+                }
+            }
+            i++
         }
     }
 }
@@ -170,11 +215,12 @@ var topicListHelper = {
             while(ignores[r].substring(d, d + 1) == ' '){
                 d++;
             }
-            ignores[r] = ignores[r].substring(d,ignores[r].length);
+            ignores[r] = ignores[r].substring(d,ignores[r].length).toLowerCase();;
         }
         return ignores;
     },
     init: function(){
+        topicListHelper.globalPort = chrome.extension.connect();
         chrome.extension.sendRequest({need:"config"}, function(conf){
             config = conf.data;
             var pm = '';

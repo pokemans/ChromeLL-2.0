@@ -1,0 +1,10 @@
+body:not(.quickpost-expanded) form.quickpost {
+	display: block;
+	position: static;
+}
+body:not(.quickpost-expanded) form.quickpost a.quickpost-nub {
+	position: fixed;
+}
+body:not(.quickpost-expanded) form.quickpost div.quickpost-canvas {
+	display: block;
+}
