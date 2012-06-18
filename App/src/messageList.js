@@ -391,6 +391,38 @@ var messageList = {
             posts[i].getElementsByClassName('message-top')[0].insertBefore(postnum, null);
         }
     },
+    post_templates: function(){
+        var sep, sepIns, qr;
+        var cDiv = document.createElement('div');
+        cDiv.style.display = 'none';
+        cDiv.id = 'cdiv';
+        document.body.insertBefore(cDiv, null);
+        messageListHelper.postEvent = document.createEvent('Event');
+        messageListHelper.postEvent.initEvent('postTemplateInsert', true, true);
+        var newScript = document.createElement('script');
+		newScript.type = 'text/javascript';
+		newScript.src = chrome.extension.getURL('App/src/topicPostTemplate.js');
+		document.getElementsByTagName('head')[0].appendChild(newScript);
+        for(var i = 0; document.getElementsByClassName('message-top')[i]; i++){
+            if(document.getElementsByClassName('message-top')[i].parentNode.className != 'quoted-message'){
+                sep = document.createElement('span');
+                sep.innerHTML = " | ";
+                sep.className = "post_template_holder";
+                sepIns = document.createElement('span');
+                sepIns.className = 'post_template_opts';
+                sepIns.innerHTML = '[';
+                qr = document.createElement('a');
+                qr.href = "##" + i;
+                qr.innerHTML = "&gt;"
+                qr.className = "expand_post_template";
+                sepIns.addEventListener("click", messageListHelper.postTemplateAction);
+                sepIns.insertBefore(qr, null);
+                sepIns.innerHTML += ']';
+                sep.insertBefore(sepIns, null);
+                document.getElementsByClassName('message-top')[i].insertBefore(sep, null);
+            }
+        }
+    },
     userhl_messagelist: function(){
         if(!config.enable_user_highlight) return;
         var messages = document.getElementsByClassName('message-container');
@@ -429,29 +461,6 @@ var messageList = {
     load_next_page: function(){
         document.getElementById('u0_3').addEventListener('dblclick', messageListHelper.loadNextPage);
     },
-    post_templates: function(){
-        var sep, sepIns, qr;
-        for(var i = 0; document.getElementsByClassName('message-top')[i]; i++){
-            if(document.getElementsByClassName('message-top')[i].parentNode.className != 'quoted-message'){
-                sep = document.createElement('span');
-                sep.innerHTML = " | ";
-                sep.className = "post_template_holder";
-                sepIns = document.createElement('span');
-                sepIns.className = 'post_template_opts';
-                sepIns.innerHTML = '[';
-                qr = document.createElement('a');
-                qr.href = "##" + i;
-                qr.innerHTML = "&gt;"
-                qr.addEventListener('click', function(evt){
-                    console.log('test');
-                });
-                sepIns.insertBefore(qr, null);
-                sepIns.innerHTML += ']';
-                sep.insertBefore(sepIns, null);
-                document.getElementsByClassName('message-top')[i].insertBefore(sep, null);
-            }
-        }
-    },
     pm_title: function(){
         var me = document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].innerHTML.match(/(.*) \(\d+\)/)[1];
         var other = '';
@@ -476,7 +485,49 @@ var messageListHelper = {
         commonFunctions.asyncUpload(chosen.files, 0);
     },
     postTemplateAction: function(evt){
-        console.log(evt);
+        if(evt.target.className === "expand_post_template"){
+            var ins = evt.target.parentNode;
+            ins.removeChild(evt.target);
+            var ia = document.createElement('a');
+            ia.innerHTML = "&lt;"
+            ia.className = "shrink_post_template";
+            ia.href = '##';
+            ins.innerHTML = '[';
+            ins.insertBefore(ia, null);
+            for(var i in config.post_template_data){
+                var title = document.createElement('a');
+                title.href = '##' + i;
+                title.className = 'post_template_title';
+                title.innerHTML = i;
+                var titleS = document.createElement('span');
+                titleS.style.paddingLeft = '3px';
+                titleS.innerHTML = '[';
+                titleS.insertBefore(title, null);
+                titleS.innerHTML += ']';
+                titleS.className = i;
+                ins.insertBefore(titleS, null);
+            }
+            ins.innerHTML += ']';
+        }
+        if(evt.target.className === "shrink_post_template"){
+            var ins = evt.target.parentNode;
+            evt.target.parentNode.removeChild(evt.target);
+            var ia = document.createElement('a');
+            ia.innerHTML = "&gt;"
+            ia.className = "expand_post_template";
+            ia.href = '##';
+            ins.innerHTML = '[';
+            ins.insertBefore(ia, null);
+            ins.innerHTML += ']';
+        }
+        if(evt.target.className === "post_template_title"){
+            evt.target.id = 'post_action';
+            var cdiv = document.getElementById('cdiv');
+            var d = {};
+            d.text = config.post_template_data[evt.target.parentNode.className].text;
+            cdiv.innerText = JSON.stringify(d);
+            cdiv.dispatchEvent(messageListHelper.postEvent);
+        }
     },
     getTcMessages: function(){
         if(!config.tcs) config.tcs = {};

@@ -188,7 +188,7 @@ function saveConfig(){
     var userhlData = document.getElementById('post_template').getElementsByClassName('post_template_data');
     cfg.post_template_data = {};
     for(var i = 0; userhlData[i]; i++){
-        name = userhlData[i].getElementsByClassName('template_title')[0].value.toLowerCase();
+        name = userhlData[i].getElementsByClassName('template_title')[0].value;
         if(name != ''){
             cfg.post_template_data[name] = {};
             cfg.post_template_data[name].text = userhlData[i].getElementsByClassName('template_text')[0].value;

@@ -101,7 +101,7 @@ function getDrama() {
 }
 buildContextMenu();
 function handleHttpsRedirect(dest){
-    return { redirectUrl: dest.url.replace(/^http/i, "https")}
+    return { redirectUrl: dest.url.replace(/^http:/i, "https:")}
 }
 
 for(var i in allBg.activeListeners){

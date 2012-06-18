@@ -1,11 +1,11 @@
 {
   "name": "ChromeLL",
-  "version": "2.0.12.553",
+  "version": "2.0.12.556",
   "manifest_version": 2,
   "description": "Enhancements for the forums at the End of the Internet",
   "options_page": "options.html",
   "minimum_chrome_version": "18.0.193.0",
-  "web_accessible_resources": [ "Style/images/lueshi_48.png", "Style/images/lueshi_128.png", "App/src/like.js" ],
+  "web_accessible_resources": [ "Style/images/lueshi_48.png", "Style/images/lueshi_128.png", "App/src/like.js", "App/src/topicPostTemplate.js" ],
   "icons": {
   	"16": "Style/images/favicon.ico",
 	"48": "Style/images/lueshi_48.png",

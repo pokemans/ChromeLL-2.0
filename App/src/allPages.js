@@ -132,38 +132,37 @@ var commonFunctions = {
         if(!i) var i = 0;
         var xh = new XMLHttpRequest();
         xh.onreadystatechange = function(){
-            if(this.readyState != 4){
-                return;
-            }
-            var tmp = document.createElement('div');
-            tmp.innerHTML = this.responseText;
-            var update_ul;
-            if(window.location.href.match('postmsg')){
-                update_ul = document.getElementsByTagName('form')[0].getElementsByTagName('b')[2];
-            }else{
-                update_ul = document.getElementsByClassName('quickpost-body')[0].getElementsByTagName('b')[0];
-            }
-            var current = update_ul.innerHTML.match(/Uploading: (\d+)\/(\d+)\)/);
-            if(tmp.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value){		
-                if(tmp.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value.substring(0, 4) == '<img'){
-                    commonFunctions.quickReplyInsert(tmp.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value);
-                    if((i + 1) == current[2]){
-                        update_ul.innerHTML = "Your Message";
-                    }else{
-                        update_ul.innerHTML = "Your Message (Uploading: " + (i + 2) + "/" + current[2] + ")";
+            if(this.readyState === 4 && this.status === 200){
+                var tmp = document.createElement('div');
+                tmp.innerHTML = this.responseText;
+                var update_ul;
+                if(window.location.href.match('postmsg')){
+                    update_ul = document.getElementsByTagName('form')[0].getElementsByTagName('b')[2];
+                }else{
+                    update_ul = document.getElementsByClassName('quickpost-body')[0].getElementsByTagName('b')[0];
+                }
+                var current = update_ul.innerHTML.match(/Uploading: (\d+)\/(\d+)\)/);
+                if(tmp.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value){		
+                    if(tmp.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value.substring(0, 4) == '<img'){
+                        commonFunctions.quickReplyInsert(tmp.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value);
+                        if((i + 1) == current[2]){
+                            update_ul.innerHTML = "Your Message";
+                        }else{
+                            update_ul.innerHTML = "Your Message (Uploading: " + (i + 2) + "/" + current[2] + ")";
+                        }
                     }
                 }
-            }
-            i++;
-            if(i < tgt.length){
-                commonFunctions.asyncUpload(tgt, i);
+                i++;
+                if(i < tgt.length){
+                    commonFunctions.asyncUpload(tgt, i);
+                }
             }
         };
         var http = 'https';
         if(window.location.href.indexOf('https:') == -1) http = 'http';
         xh.open('post', http + '://u.endoftheinter.net/u.php', true);
         var formData = new FormData();
-        formData.append('upload',tgt[i]);
+        formData.append('file',tgt[i]);
         xh.withCredentials = "true";
         xh.send(formData);
 	},
@@ -332,6 +331,7 @@ var commonFunctions = {
         update.innerHTML="";
         update.id="dramalinks_update";
         var h1 = document.getElementsByTagName('h1')[0];
+        if(config.dramalinks_below_topic && document.getElementsByTagName('h2')[0]) h1 = document.getElementsByTagName('h2')[0];
         h1.parentNode.insertBefore(ticker,h1.nextSibling);
         h1.parentNode.insertBefore(update,h1.nextSibling);
         if(hide){

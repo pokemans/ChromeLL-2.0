@@ -555,6 +555,9 @@ span.desc {
     border: none !important;
     border-bottom: 1px solid #333 !important;
 }
+.subbox{
+    padding-left: 20px;
+}
 </style>
 <link rel="stylesheet" href="Style/css/config/button.css">
 <link rel="stylesheet" href="Style/css/config/checkbox.css">
@@ -628,18 +631,24 @@ span.desc {
 									<span>Show the dramalinks ticker</span>
 								</label>
                             </div>
-                            <div class="checkbox">
+                            <div class="checkbox subbox">
                                 <label>
 									<input type="checkbox" id="hide_dramalinks" />
 									<span>Double click board name to show dramalinks ticker</span>
 								</label>
 							</div>
-                            <div class="checkbox">
+                            <div class="checkbox subbox">
                                 <label>
 									<input type="checkbox" id="hide_dramalinks_topiclist" />
 									<span>Only show the dramalinks ticker on the topic list</span>
 								</label>
 							</div>
+                            <div class="checkbox subbox">
+                                <label>
+                                    <input type="checkbox" id="dramalinks_below_topic" />
+                                    <span>Put the dramalinks ticker below the topic title</span>
+                                </label>
+                            </div>
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" id="user_info_popup" />

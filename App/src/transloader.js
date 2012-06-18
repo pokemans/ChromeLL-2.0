@@ -74,7 +74,11 @@ function imageTransloader(info) {
                                                                         //parse response
                                                                         var html = document.createElement('html');
                                                                         html.innerHTML = xhr.responseText;
-                                                                        var value = html.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value;
+                                                                        try{
+                                                                            var value = html.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value;
+                                                                        }catch(e){
+                                                                            console.log("Error in response", html.innerHTML);
+                                                                        }
 
                                                                         //send img code to clipboard
                                                                         var clipboard = document.getElementById('clipboard');
