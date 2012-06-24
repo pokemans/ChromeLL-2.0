@@ -533,6 +533,7 @@ var messageListHelper = {
         if(!config.tcs) config.tcs = {};
         var tcs = Array();
         var topic = window.location.href.match(/topic=(\d+)/)[1];
+        var board = window.location.href.match(/board=(\d+)/)[1];
         var heads = document.getElementsByClassName('message-top');
         //var heads = Array();
         //var messages = document.getElementsByClassName('message-container');
@@ -540,7 +541,10 @@ var messageListHelper = {
         //    heads.push(messages[i].getElementsByClassName('message-top')[0]);
         //}
         var tc;
-        if((!window.location.href.match('page') || window.location.href.match('page=1($|&)')) && !window.location.href.match(/u=(\d+)/)) tc = heads[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+        var haTopic = (board == 444); //Check if HA topic
+        if(haTopic) {
+            tc = "human #1";
+        }else if((!window.location.href.match('page') || window.location.href.match('page=1($|&)')) && !window.location.href.match(/u=(\d+)/)) tc = heads[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
         else{
             if(!config.tcs[topic]){
                 console.log('Unknown TC!');
@@ -554,6 +558,9 @@ var messageListHelper = {
             config.tcs[topic].date = new Date().getTime();
         }
         for(var i = 0; i < heads.length; i++){
+            if(haTopic && heads[i].innerHTML.indexOf("\">Human") == -1){
+                heads[i].innerHTML = heads[i].innerHTML.replace(/Human #(\d+)/, "<a href=\"#\">Human #$1</a>");
+            }
             if(heads[i].getElementsByTagName('a')[0].innerHTML.toLowerCase() == tc){
                 tcs.push(heads[i]);
             }
