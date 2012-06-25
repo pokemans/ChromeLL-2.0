@@ -543,13 +543,9 @@ var messageListHelper = {
         var haTopic = (board == 444); //Check if HA topic
         if(haTopic) {
             tc = "human #1";
-<<<<<<< HEAD
         }
         else if((!window.location.href.match('page') || window.location.href.match('page=1($|&)')) && !window.location.href.match(/u=(\d+)/))
             tc = heads[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
-=======
-        }else if((!window.location.href.match('page') || window.location.href.match('page=1($|&)')) && !window.location.href.match(/u=(\d+)/)) tc = heads[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
->>>>>>> 33e5372b149f12dd44283db369eba528a750409f
         else{
             if(!config.tcs[topic]){
                 console.log('Unknown TC!');
