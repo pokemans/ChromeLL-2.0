@@ -41,7 +41,7 @@ var allPages = {
         userbar.style.marginTop = '-2px';
         userbar.style.borderBottomLeftRadius = '5px';
         userbar.style.borderBottomRightRadius = '5px';
-        document.getElementsByTagName('h1')[0].style.paddingTop = '40px';
+        config.remove_links ? document.getElementsByTagName('h1')[0].style.paddingTop = '20px' : document.getElementsByTagName('h1')[0].style.paddingTop = '40px';
         document.getElementsByClassName('body')[0].insertBefore(id, null);
     },
     float_userbar_bottom: function(){

@@ -20,9 +20,12 @@ var topicList = {
                             title.parentNode.className = "hidden_tr";
                             ignorated.total_ignored++;
                             if(!ignorated.data.users[ignores[f]]){
-                                ignorated.data.users[ignores[f]] = 1;
+                                ignorated.data.users[ignores[f]] = {};
+                                ignorated.data.users[ignores[f]].total = 1;
+                                ignorated.data.users[ignores[f]].trs = [i];
                             }else{
-                                ignorated.data.users[ignores[f]]++;
+                                ignorated.data.users[ignores[f]].total++;
+                                ignorated.data.users[ignores[f]].trs.push(i);
                             }
                         }
                     }
@@ -72,9 +75,12 @@ var topicList = {
                             title.parentNode.className = "hidden_tr";
                             ignorated.total_ignored++;
                             if(!ignorated.data.keywords[keywords[f]]){
-                                ignorated.data.keywords[keywords[f]] = 1;
+                                ignorated.data.keywords[keywords[f]] = {};
+                                ignorated.data.keywords[keywords[f]].total = 1;
+                                ignorated.data.keywords[keywords[f]].trs = [i];
                             }else{
-                                ignorated.data.keywords[keywords[f]]++;
+                                ignorated.data.keywords[keywords[f]].total++;
+                                ignorated.data.keywords[keywords[f]].trs.push(i);
                             }
                             //break;
                         }
@@ -233,6 +239,21 @@ var topicListHelper = {
                         console.log("error in " + i + ":", err);
                     }
                 }
+            }
+        });
+        topicListHelper.globalPort.onMessage.addListener(function(msg){
+            switch(msg.action){
+                case "showIgnorated":
+                    if(config.debug) console.log("showing hidden trs", msg.ids);
+                    var tr = document.getElementsByTagName('tr');
+                    for(var i; i = msg.ids.pop();){
+                        tr[i].style.display = '';
+                        tr[i].style.opacity = '.7';
+                    }
+                    break;
+                default:
+                    if(config.debug) console.log('invalid action', msg);
+                    break;
             }
         });
     }

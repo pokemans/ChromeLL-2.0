@@ -22,6 +22,7 @@ var messageList = {
     ignorator_messagelist: function(){
         if(!config.ignorator) return;
         var s;
+        ignorated.total_ignored = 0;
         messageListHelper.ignores = config.ignorator_list.split(',');
         for(var r = 0; r < messageListHelper.ignores.length; r++){
             var d = 0;
@@ -30,7 +31,7 @@ var messageList = {
             }
             messageListHelper.ignores[r] = messageListHelper.ignores[r].substring(d,messageListHelper.ignores[r].length).toLowerCase();
         }
-        for(var j = 0; document.getElementsByClassName('message-top').item(j); j++){
+        for(var j = 0; document.getElementsByClassName('message-top')[j]; j++){
             s = document.getElementsByClassName('message-top').item(j);
             for(var f = 0; messageListHelper.ignores[f]; f++){
                 if(s.getElementsByTagName('a').item(0).innerHTML.toLowerCase() == messageListHelper.ignores[f]){
@@ -38,9 +39,12 @@ var messageList = {
                     if(config.debug) console.log('removed post by ' + messageListHelper.ignores[f]);
                     ignorated.total_ignored++;
                     if(!ignorated.data.users[messageListHelper.ignores[f]]){
-                        ignorated.data.users[messageListHelper.ignores[f]] = 1;
+                        ignorated.data.users[messageListHelper.ignores[f]] = {};
+                        ignorated.data.users[messageListHelper.ignores[f]].total = 1;
+                        ignorated.data.users[messageListHelper.ignores[f]].trs = [j];
                     }else{
-                        ignorated.data.users[messageListHelper.ignores[f]]++;
+                        ignorated.data.users[messageListHelper.ignores[f]].total++;
+                        ignorated.data.users[messageListHelper.ignores[f]].trs.push(j);
                     }
                 }
             }
@@ -533,14 +537,15 @@ var messageListHelper = {
         if(!config.tcs) config.tcs = {};
         var tcs = Array();
         var topic = window.location.href.match(/topic=(\d+)/)[1];
+        var board = window.location.href.match(/board=(\d+)/)[1];
         var heads = document.getElementsByClassName('message-top');
-        //var heads = Array();
-        //var messages = document.getElementsByClassName('message-container');
-        //for(var i = 0; i < messages.length; i++){
-        //    heads.push(messages[i].getElementsByClassName('message-top')[0]);
-        //}
         var tc;
-        if((!window.location.href.match('page') || window.location.href.match('page=1($|&)')) && !window.location.href.match(/u=(\d+)/)) tc = heads[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+        var haTopic = (board == 444); //Check if HA topic
+        if(haTopic) {
+            tc = "human #1";
+        }
+        else if((!window.location.href.match('page') || window.location.href.match('page=1($|&)')) && !window.location.href.match(/u=(\d+)/))
+            tc = heads[0].getElementsByTagName('a')[0].innerHTML.toLowerCase();
         else{
             if(!config.tcs[topic]){
                 console.log('Unknown TC!');
@@ -554,6 +559,9 @@ var messageListHelper = {
             config.tcs[topic].date = new Date().getTime();
         }
         for(var i = 0; i < heads.length; i++){
+            if(haTopic && heads[i].innerHTML.indexOf("\">Human") == -1){
+                heads[i].innerHTML = heads[i].innerHTML.replace(/Human #(\d+)/, "<a href=\"#\">Human #$1</a>");
+            }
             if(heads[i].getElementsByTagName('a')[0].innerHTML.toLowerCase() == tc){
                 tcs.push(heads[i]);
             }
@@ -694,8 +702,17 @@ var messageListHelper = {
                         //chrome bug, disabled for now
                         //messageListHelper.clearUnreadPosts();
                         break;
+                    case "showIgnorated":
+                        if(config.debug) console.log("showing hidden msg", msg.ids);
+                        var tr = document.getElementsByClassName('message-top');
+                        for(var i; i = msg.ids.pop();){
+                            console.log(tr[i]);
+                            tr[i].parentNode.style.display = 'block';
+                            tr[i].parentNode.style.opacity = '.7';
+                        }
+                        break;
                     default:
-                        if(config.debug) console.log('invalid action');
+                        if(config.debug) console.log('invalid action', msg);
                         break;
                 }
             });
@@ -808,6 +825,10 @@ var messageListLivelinks = {
         messageListHelper.addNotebox(el.getElementsByClassName('message-top'));
     },
     post_title_notification: function(el){
+        if(el.style.display === "none"){
+            if(config.debug) console.log('not updating for ignorated post');
+            return;
+        }
         if(el.getElementsByClassName('message-top')[0].getElementsByTagName('a')[0].innerHTML == document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].innerHTML.replace(/ \((\d+)\)$/, "")) return;
         var posts = 1;
         var ud = '';
@@ -905,6 +926,9 @@ var messageListLivelinks = {
     },
     foxlinks_quotes: function(el){
         messageList.foxlinks_quotes();
+    },
+     autoscroll_livelinks: function(){
+        window.scrollTo(0, (document.body.scrollHeight - 1000))
     }
 }
 messageListHelper.init();

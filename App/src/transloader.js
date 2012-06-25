@@ -78,6 +78,7 @@ function imageTransloader(info) {
                                                                             var value = html.getElementsByClassName('img')[0].getElementsByTagName('input')[0].value;
                                                                         }catch(e){
                                                                             console.log("Error in response", html.innerHTML);
+                                                                            return;
                                                                         }
 
                                                                         //send img code to clipboard
