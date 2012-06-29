@@ -87,7 +87,7 @@ var topicList = {
                     }
             }
         }
-        topicListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated});
+        topicListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated, scope: "topicList"});
     },
     page_jump_buttons: function(){
         var trs = topicListHelper.getTopics();
@@ -233,11 +233,11 @@ var topicListHelper = {
             if(window.location.href.match('inbox.php')) pm = "_pm";
             for(var i in topicList){
                 if(config[i + pm]){
-                    //try{
+                    try{
                         topicList[i]();
-                    //}catch(err){
-                    //    console.log("error in " + i + ":", err);
-                    //}
+                    }catch(err){
+                        console.log("error in " + i + ":", err);
+                    }
                 }
             }
         });

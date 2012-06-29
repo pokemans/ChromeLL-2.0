@@ -24,6 +24,7 @@ window.onload = function(){
         //console.log(response.ignorator);
         //console.log(response.ignorator.data.users);
         ignoratorData = response.ignorator.data;
+        document.getElementById('info_test_display').innerHTML = response.scope;
         if(response.ignorator.data.users){
             for(var i in response.ignorator.data.users){
                 //console.log('user', i);

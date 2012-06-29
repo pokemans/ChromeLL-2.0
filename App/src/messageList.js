@@ -49,7 +49,7 @@ var messageList = {
                 }
             }
         }
-        messageListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated});
+        messageListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated, scope: "messageList"});
     },
     imagemap_on_infobar: function(){
         function getUrlVars(urlz){
@@ -671,6 +671,7 @@ var messageListHelper = {
         if(document.title.match(/\(\d+\+?\)/)){
             var newTitle = document.title.replace(/\(\d+\+?\) /, "");
             document.title = newTitle;
+            
             // chrome bug, title does not always update on windows
             //setTimeout(function(){
             //    document.title = newTitle;
@@ -696,7 +697,7 @@ var messageListHelper = {
             messageListHelper.globalPort.onMessage.addListener(function(msg){
                 switch(msg.action){
                     case "ignorator_update":
-                        messageListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated});
+                        messageListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated, scope: "messageList"});
                         break;
                     case "focus_gained":
                         //chrome bug, disabled for now
@@ -824,6 +825,17 @@ var messageListLivelinks = {
     user_notes: function(el){
         messageListHelper.addNotebox(el.getElementsByClassName('message-top'));
     },
+    autoscroll_livelinks: function(el){
+        window.scrollTo(0, (document.body.scrollHeight - 1000));
+        var page = 1;
+        if(window.location.href.match('page='))
+            page = window.location.href.match(/page=(\d+)/)[1];
+        var pages = document.getElementById('u0_2').getElementsByTagName('span')[0].innerHTML;
+        if(page !== pages){
+            window.location.href.match('page=') ? document.location = document.location.replace('page=' + page, 'page=' + pages) : document.location = document.location + '&page=' + pages;
+        }
+        messageListHelper.scrolledEl = el;
+    },
     post_title_notification: function(el){
         if(el.style.display === "none"){
             if(config.debug) console.log('not updating for ignorated post');
@@ -926,9 +938,6 @@ var messageListLivelinks = {
     },
     foxlinks_quotes: function(el){
         messageList.foxlinks_quotes();
-    },
-     autoscroll_livelinks: function(){
-        window.scrollTo(0, (document.body.scrollHeight - 1000))
     }
 }
 messageListHelper.init();
