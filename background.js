@@ -71,7 +71,8 @@ function getDrama() {
     if(cfg.debug) console.log('fetching dramalinks from wiki...');
     var dramas;
     var xhr = new XMLHttpRequest();
-	xhr.open("GET", "http://wiki.endoftheinter.net/index.php?title=Dramalinks/current&action=raw&section=0&maxage=30", true);		
+	xhr.open("GET", "http://wiki.endoftheinter.net/index.php?title=Dramalinks/current&action=raw&section=0&maxage=30", true);	
+    xhr.withCredentials = "true";
 	xhr.send();
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState == 4) {

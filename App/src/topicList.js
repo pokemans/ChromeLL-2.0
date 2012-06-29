@@ -233,11 +233,11 @@ var topicListHelper = {
             if(window.location.href.match('inbox.php')) pm = "_pm";
             for(var i in topicList){
                 if(config[i + pm]){
-                    try{
+                    //try{
                         topicList[i]();
-                    }catch(err){
-                        console.log("error in " + i + ":", err);
-                    }
+                    //}catch(err){
+                    //    console.log("error in " + i + ":", err);
+                    //}
                 }
             }
         });
