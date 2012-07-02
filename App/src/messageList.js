@@ -668,6 +668,10 @@ var messageListHelper = {
         });
     },
     clearUnreadPosts: function(evt){
+        if(messageListHelper.hasJustScrolled){
+            messageListHelper.hasJustScrolled = false;
+            return;
+        }
         if(document.title.match(/\(\d+\+?\)/)){
             var newTitle = document.title.replace(/\(\d+\+?\) /, "");
             document.title = newTitle;
@@ -834,7 +838,7 @@ var messageListLivelinks = {
         if(page !== pages){
             window.location.href.match('page=') ? document.location = document.location.replace('page=' + page, 'page=' + pages) : document.location = document.location + '&page=' + pages;
         }
-        messageListHelper.scrolledEl = el;
+        messageListHelper.hasJustScrolled = true;
     },
     post_title_notification: function(el){
         if(el.style.display === "none"){
