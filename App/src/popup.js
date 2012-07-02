@@ -47,7 +47,7 @@ window.onload = function(){
                 insert = document.createElement('div');
                 insert.className = 'keyword_ignore';
                 insert.innerHTML = '<span class="rm_num">' + response.ignorator.data.keywords[i].total + '</span>' + i;
-                document.getElementById('js_insert').insertBefore(insert, null);
+                //document.getElementById('js_insert').insertBefore(insert, null);
             }
         }
     });
