@@ -35,6 +35,17 @@ $(document).ready(function(){
 function restoreConfig(){
     console.log('loading config');
     var config = JSON.parse(localStorage['ChromeLL-Config']);
+    chrome.storage.sync.get('keys', function(resp){
+        console.log(resp);
+        if(resp.keys){
+            //for(var i in resp.keys){
+                //chrome.storage.sync.get(i, function(resp){
+                    //console.log('getting value', i , resp);
+                //    config[i] = resp;
+                //});
+            //}
+        }
+    });
     var checkboxes = $(":checkbox");
     for(var i in checkboxes){
         checkboxes[i].checked = config[checkboxes[i].id];
@@ -196,6 +207,16 @@ function saveConfig(){
     }
     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
     allBg.init_listener(cfg);
+    var splitConfig = {};
+    for(var i = 0; split[i]; i++){
+        splitConfig[split[i]] = cfg[split[i]];
+        delete cfg[split[i]];
+    }
+    splitConfig.cfg = cfg;
+    for(var i in splitConfig){
+        chrome.storage.sync.set({i: splitConfig[i]});
+        console.log(i, splitConfig[i]);
+    }
 }
 
 function restoreV1Cfg(oC){
