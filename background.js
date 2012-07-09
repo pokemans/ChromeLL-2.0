@@ -31,21 +31,22 @@ function chkSync(){
     // "split" these config keys from the default config save, 2048 byte limit per item
     var split = ["user_highlight_data", "keyword_highlight_data", "post_template_data", "ignorator_list", "ignore_keyword_list"];
     chrome.storage.sync.get('cfg', function(data){
-        console.log(data);
         if(data.cfg && data.cfg.last_saved > cfg.last_saved){
-            console.log('loading sync config');
+            console.log('loading sync config - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
             for(var j in data.cfg){
                 cfg[j] = data.cfg[j];
             }
-            for(var j = 0; split[j]; j++){
-                chrome.storage.sync.get(split[j], function(r){
-                    console.log('setting', j, r);
-                    cfg[j] = r;
-                });
-            }
-            localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
+            chrome.storage.sync.get(split, function(r){
+                console.log(r);
+                for(var i in r){
+                    console.log('setting', i, r[i]);
+                    cfg[i] = r[i];
+                }
+                console.log('saving config ->', cfg);
+                localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
+            });
         }else if(!data.cfg || data.cfg.last_saved < cfg.last_saved){
-            console.log('updating sync config');
+            console.log('updating sync config - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
             var xCfg = cfg;
             var x;
             for(var i = 0; split[i]; i++){
@@ -58,7 +59,7 @@ function chkSync(){
             console.log('setting', xCfg);
             chrome.storage.sync.set({'cfg': xCfg});
         }else{
-            console.log('skipping sync actions');
+            console.log('skipping sync actions - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
         }
     });
 }
