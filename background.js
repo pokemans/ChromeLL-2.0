@@ -4,11 +4,7 @@ var drama = {};
 var tabPorts = {};
 var ignoratorInfo = {};
 var scopeInfo = {};
-var defaultConfig = '{"float_userbar":false,"short_title":true,"show_secret_boards":true,"dramalinks":false,"hide_dramalinks":false,"hide_dramalinks_topiclist":false,"user_info_popup":true,"zebra_tables":false,"force_https":false,"sys_notifications":true,"close_notifications":false,"ignorator":false,"enable_user_highlight":false,"ignorator_topiclist":false,"userhl_topiclist":false,"page_jump_buttons":true,"ignore_keyword":false,"enable_keyword_highlight":false,"click_expand_thumbnail":true,"imagemap_on_infobar":false,"resize_imgs":false,"user_notes":true,"ignorator_messagelist":false,"userhl_messagelist":false,"no_user_highlight_quotes":false,"notify_userhl_post":false,"notify_quote_post":false,"new_page_notify":false,"number_posts":true,"like_button":true,"loadquotes":true,"post_title_notification":true,"filter_me":false,"expand_spoilers":false,"highlight_tc":false,"label_tc":true,"foxlinks_quotes":false,"quickpost_tag_buttons":false,"quickpost_on_pgbottom":false,"post_before_preview":false,"batch_uploader":false,"drop_batch_uploader":true,"sort_history":false,"history_expand_search":false,"ignorator_topiclist_pm":false,"userhl_topiclist_pm":false,"page_jump_buttons_pm":true,"click_expand_thumbnail_pm":true,"user_notes_pm":false,"userhl_messagelist_pm":false,"pm_title_pm":true,"number_posts_pm":true,"loadquotes_pm":true,"post_title_notification_pm":true,"quickpost_tag_buttons_pm":false,"quickpost_on_pgbottom_pm":false,"post_before_preview_pm":false,"batch_uploader_pm":false,"drop_batch_uploader_pm":true,"debug":false,"zebra_tables_color":"D7DEE8","close_notification_time":"5","ignorator_list":"","ignore_keyword_list":"","":"0","img_max_width":"1440","tc_highlight_color":"ffff00","tc_label_color":"","foxlinks_quotes_color":"","user_highlight_data":{},"keyword_highlight_data":{},"context_menu":true}';
-
-chrome.storage.sync.get("config", function(rst){
-    console.log(rst);
-});
+var defaultConfig = '{"float_userbar":false,"short_title":true,"show_secret_boards":true,"dramalinks":false,"hide_dramalinks":false,"hide_dramalinks_topiclist":false,"user_info_popup":true,"zebra_tables":false,"force_https":false,"sys_notifications":true,"close_notifications":false,"ignorator":false,"enable_user_highlight":false,"ignorator_topiclist":false,"userhl_topiclist":false,"page_jump_buttons":true,"ignore_keyword":false,"enable_keyword_highlight":false,"click_expand_thumbnail":true,"imagemap_on_infobar":false,"resize_imgs":false,"user_notes":true,"ignorator_messagelist":false,"userhl_messagelist":false,"no_user_highlight_quotes":false,"notify_userhl_post":false,"notify_quote_post":false,"new_page_notify":false,"number_posts":true,"like_button":true,"loadquotes":true,"post_title_notification":true,"filter_me":false,"expand_spoilers":false,"highlight_tc":false,"label_tc":true,"foxlinks_quotes":false,"quickpost_tag_buttons":false,"quickpost_on_pgbottom":false,"post_before_preview":false,"batch_uploader":false,"drop_batch_uploader":true,"sort_history":false,"history_expand_search":false,"ignorator_topiclist_pm":false,"userhl_topiclist_pm":false,"page_jump_buttons_pm":true,"click_expand_thumbnail_pm":true,"user_notes_pm":false,"userhl_messagelist_pm":false,"pm_title_pm":true,"number_posts_pm":true,"loadquotes_pm":true,"post_title_notification_pm":true,"quickpost_tag_buttons_pm":false,"quickpost_on_pgbottom_pm":false,"post_before_preview_pm":false,"batch_uploader_pm":false,"drop_batch_uploader_pm":true,"debug":false,"zebra_tables_color":"D7DEE8","close_notification_time":"5","ignorator_list":"","ignore_keyword_list":"","":"0","img_max_width":"1440","tc_highlight_color":"ffff00","tc_label_color":"","foxlinks_quotes_color":"","user_highlight_data":{},"keyword_highlight_data":{},"context_menu":true, "last_saved":0 }';
 
 if(localStorage['ChromeLL-Config'] == undefined){
     localStorage['ChromeLL-Config'] = defaultConfig;
@@ -28,6 +24,44 @@ function upgradeConfig(){
     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
 }
 upgradeConfig();
+
+// sync listener - check every 120s for a newer config
+function chkSync(){
+    // "split" these config keys from the default config save, 2048 byte limit per item
+    var split = ["user_highlight_data", "keyword_highlight_data", "post_template_data", "ignorator_list", "ignore_keyword_list"];
+    chrome.storage.sync.get('cfg', function(data){
+        console.log(data);
+        if(data.cfg && data.cfg.last_saved > cfg.last_saved){
+            console.log('loading sync config');
+            for(var j in data.cfg){
+                cfg[j] = data.cfg[j];
+            }
+            for(var j = 0; split[j]; j++){
+                chrome.storage.sync.get(split[j], function(r){
+                    console.log('setting', j, r);
+                    cfg[j] = r;
+                });
+            }
+            localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
+        }else if(!data.cfg || data.cfg.last_saved < cfg.last_saved){
+            console.log('updating sync config');
+            var xCfg = cfg;
+            var x;
+            for(var i = 0; split[i]; i++){
+                x = JSON.stringify(cfg[split[i]]);
+                var y = split[i];
+                chrome.storage.sync.set({y : x});
+                console.log('setting', i, split[i], cfg[split[i]], x);
+                delete xCfg[split[i]];
+            }
+            console.log('setting', xCfg);
+            chrome.storage.sync.set({'cfg': xCfg});
+        }else{
+            console.log('skipping sync actions');
+        }
+    });
+}
+chkSync();
 
 if(localStorage['ChromeLL-TCs'] == undefined) localStorage['ChromeLL-TCs'] = "{}";
 
@@ -135,8 +169,6 @@ allBg.init_listener(cfg);
 chrome.tabs.onActivated.addListener(function(tab){
     if(!tabPorts[tab.tabId]) return;
     currentTab = tab.tabId;
-    //console.log(tabPorts, tab.tabId, tabPorts[tab.tabId]);
-    //console.log(tabPorts);
     tabPorts[tab.tabId].postMessage({action: 'focus_gained'});
     tabPorts[tab.tabId].postMessage({action: 'ignorator_update'});
 });
@@ -174,6 +206,7 @@ chrome.extension.onRequest.addListener(
     function(request, sender, sendResponse) {
         switch(request.need){
             case "config":
+                // page script needs extension config.
                 cfg = JSON.parse(localStorage['ChromeLL-Config']);
                 if(request.sub){
                     sendResponse({"data": cfg[request.sub]});
@@ -185,12 +218,13 @@ chrome.extension.onRequest.addListener(
                 }
                 break;
             case "save":
+                // page script needs config save.
                 if(request.name === "tcs"){
                     localStorage['ChromeLL-TCs'] = JSON.stringify(request.data);
                 }else{
                     cfg[request.name] = request.data;
+                    cfg.last_saved = new Date().getTime();
                     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
-                    chrome.storage.sync.set({'config': cfg});
                 }
                 if(cfg.debug) console.log('saving ', request.name, request.data);
                 break;

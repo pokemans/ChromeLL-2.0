@@ -38,4 +38,3 @@ var allBg = {
         return { redirectUrl: dest.url.replace(/^http/i, "https")};
     }
 }
-var split = ["user_highlight_data", "keyword_highlight_data", "post_template_data", "ignorator_list"];
