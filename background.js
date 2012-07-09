@@ -21,6 +21,7 @@ function upgradeConfig(){
             console.log("upgrade diff!", i, cfg[i]);
         }
     }
+    if(cfg.tcs) delete cfg.tcs
     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
 }
 upgradeConfig();
