@@ -26,42 +26,49 @@ function upgradeConfig(){
 }
 upgradeConfig();
 
-// sync listener - check every 120s for a newer config
+// sync listener - check every 90s for a config diff
 function chkSync(){
     // "split" these config keys from the default config save, 2048 byte limit per item
-    var split = ["user_highlight_data", "keyword_highlight_data", "post_template_data", "ignorator_list", "ignore_keyword_list"];
+    var split = {"user_highlight_data": "sync_userhl", "keyword_highlight_data": "sync_cfg", "post_template_data": "sync_cfg", "ignorator_list": "sync_ignorator", "ignore_keyword_list": "sync_ignorator"};
     chrome.storage.sync.get('cfg', function(data){
         if(data.cfg && data.cfg.last_saved > cfg.last_saved){
-            console.log('loading sync config - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
+            if(cfg.debug) console.log('copy sync to local - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
             for(var j in data.cfg){
                 cfg[j] = data.cfg[j];
             }
-            chrome.storage.sync.get(split, function(r){
-                console.log(r);
-                for(var i in r){
-                    console.log('setting', i, r[i]);
-                    cfg[i] = r[i];
+            localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
+            var bSplit = [];
+            for(var k in split){
+                if(cfg[split[k]]){
+                    bSplit.push(k);
                 }
-                console.log('saving config ->', cfg);
+            }
+            chrome.storage.sync.get(bSplit, function(r){
+                for(var l in r){
+                    if(cfg.debug) console.log('setting local', l, r[l]);
+                    cfg[l] = r[l];
+                }
                 localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
             });
         }else if(!data.cfg || data.cfg.last_saved < cfg.last_saved){
-            console.log('updating sync config - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
+            if(cfg.debug) console.log('copy local to sync - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
             var xCfg = cfg;
-            var x;
-            for(var i = 0; split[i]; i++){
-                x = JSON.stringify(cfg[split[i]]);
-                var y = split[i];
-                chrome.storage.sync.set({y : x});
-                console.log('setting', i, split[i], cfg[split[i]], x);
-                delete xCfg[split[i]];
+            var toSet = {}
+            for(var i in split){
+                if(cfg[split[i]]){
+                    toSet[i] = cfg[i];
+                }
+                delete xCfg[i];
             }
-            console.log('setting', xCfg);
+            if(cfg.debug) console.log('setting sync', xCfg);
             chrome.storage.sync.set({'cfg': xCfg});
+            if(cfg.debug) console.log('setting sync objects', toSet);
+            chrome.storage.sync.set(toSet);
         }else{
-            console.log('skipping sync actions - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
+            if(cfg.debug) console.log('skipping sync actions - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
         }
     });
+    setTimeout(chkSync, 90 * 1000);
 }
 chkSync();
 

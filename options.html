@@ -558,6 +558,14 @@ span.desc {
 .subbox{
     padding-left: 20px;
 }
+.beta_info{
+    //background: #ff7878;
+    text-align: center;
+    border: 1px solid #ff0000;
+    border-radius: 4px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
 </style>
 <link rel="stylesheet" href="Style/css/config/button.css">
 <link rel="stylesheet" href="Style/css/config/checkbox.css">
@@ -628,7 +636,7 @@ span.desc {
                             <div class="checkbox">
 								<label>
 									<input type="checkbox" id="context_menu" />
-									<span>Show the right click menu (enable/disable extension or restart browser to take effect)</span>
+									<span>Show the right click menu (disable/enable extension or restart browser to take effect)</span>
 								</label>
 							</div>
                             <div class="checkbox">
@@ -667,7 +675,6 @@ span.desc {
                             </div>
 						</div>
 					</section>
-					
 					<section>
 						<h3>Security</h3>
 						<div>
@@ -678,6 +685,30 @@ span.desc {
 								</label>							
 							</div>
 							
+						</div>
+					</section>
+                    <section>
+						<h3>Chrome Sync</h3>
+						<div>
+                            <span class="beta_info"><b>beta!</b> Make a backup of your config(s) from the about page. Do not sync highlights if you have &gt; 40 highlighted users.</span>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="sync_cfg" />
+									<span>Sync configuration with chrome profile</span>
+								</label>							
+							</div>
+                            <div class="checkbox subbox">
+								<label>
+									<input type="checkbox" id="sync_userhl" />
+									<span>Sync user highlights</span>
+								</label>							
+							</div>
+                            <div class="checkbox subbox">
+								<label>
+									<input type="checkbox" id="sync_ignorator" />
+									<span>Sync ignorator</span>
+								</label>							
+							</div>
 						</div>
 					</section>
                     <section>
@@ -1252,7 +1283,7 @@ span.desc {
                         <div>
                             <input type="button" value="Show ChromeLL Config" id="showcfg" />
                             <input type="button" value="Load ChromeLL Config" id="loadcfg" />
-                            <textarea id="cfg_ta" style="width: 100%; height: 300px; border: none;"></textarea>
+                            <textarea id="cfg_ta" style="width: 90%; height: 300px; border: none;"></textarea>
                         </div>
                     </section>
                 </div>     
