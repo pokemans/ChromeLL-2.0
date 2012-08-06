@@ -1,6 +1,6 @@
 {
   "name": "ChromeLL",
-  "version": "2.0.12.560",
+  "version": "2.0.12.567",
   "manifest_version": 2,
   "description": "Enhancements for the forums at the End of the Internet",
   "options_page": "options.html",
@@ -21,15 +21,18 @@
   },
   "content_scripts": [
   {
-    "matches": ["http://boards.endoftheinter.net/showmessages.php*", "https://boards.endoftheinter.net/showmessages.php*", "http://archives.endoftheinter.net/showmessages.php*", "https://archives.endoftheinter.net/showmessages.php*", "http://endoftheinter.net/inboxthread.php*", "https://endoftheinter.net/inboxthread.php*"],
+    "matches": ["http://boards.endoftheinter.net/showmessages.php*", "https://boards.endoftheinter.net/showmessages.php*", "http://archives.endoftheinter.net/showmessages.php*", "https://archives.endoftheinter.net/showmessages.php*", "http://endoftheinter.net/inboxthread.php*", "https://endoftheinter.net/inboxthread.php*",
+                "http://boards.clouds.endoftheinter.net/showmessages.php*", "https://boards.clouds.endoftheinter.net/showmessages.php*", "http://archives.clouds.endoftheinter.net/showmessages.php*", "https://archives.clouds.endoftheinter.net/showmessages.php*", "http://clouds.endoftheinter.net/inboxthread.php*", "https://clouds.endoftheinter.net/inboxthread.php*"],
     "js": ["App/src/allPages.js", "App/src/messageList.js"]
   },
   {
-    "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*", "http://boards.endoftheinter.net/showfavorites.php*", "https://boards.endoftheinter.net/showfavorites.php*", "http://archives.endoftheinter.net/search.php*", "https://archives.endoftheinter.net/search.php*", "http://endoftheinter.net/inbox.php*", "https://endoftheinter.net/inbox.php*", "http://boards.endoftheinter.net/search.php*", "https://boards.endoftheinter.net/search.php*", "http://endoftheinter.net/main.php", "https://endoftheinter.net/main.php"],
+    "matches": ["http://boards.endoftheinter.net/showtopics.php*", "https://boards.endoftheinter.net/showtopics.php*", "http://boards.endoftheinter.net/showfavorites.php*", "https://boards.endoftheinter.net/showfavorites.php*", "http://archives.endoftheinter.net/search.php*", "https://archives.endoftheinter.net/search.php*", "http://endoftheinter.net/inbox.php*", "https://endoftheinter.net/inbox.php*", "http://boards.endoftheinter.net/search.php*", "https://boards.endoftheinter.net/search.php*", "http://endoftheinter.net/main.php", "https://endoftheinter.net/main.php",
+                "http://boards.clouds.endoftheinter.net/topics/*", "https://boards.clouds.endoftheinter.net/topics/*", "http://boards.clouds.endoftheinter.net/showfavorites.php*", "https://boards.clouds.endoftheinter.net/showfavorites.php*", "http://archives.clouds.endoftheinter.net/search.php*", "https://archives.clouds.endoftheinter.net/search.php*", "http://clouds.endoftheinter.net/inbox.php*", "https://clouds.endoftheinter.net/inbox.php*", "http://boards.clouds.endoftheinter.net/search.php*", "https://boards.clouds.endoftheinter.net/search.php*", "http://clouds.endoftheinter.net/main.php", "https://clouds.endoftheinter.net/main.php"],
     "js": ["App/src/allPages.js", "App/src/topicList.js"] 
   },
   {
-    "matches": ["http://*.endoftheinter.net/postmsg.php*", "https://*.endoftheinter.net/postmsg.php*"],
+    "matches": ["http://*.endoftheinter.net/postmsg.php*", "https://*.endoftheinter.net/postmsg.php*",
+                "http://*.clouds.endoftheinter.net/postmsg.php*", "https://*.clouds.endoftheinter.net/postmsg.php*"],
     "js": ["App/src/allPages.js", "App/src/postMsg.js"] 
   },
   {
@@ -37,11 +40,13 @@
     "js": ["App/src/allPages.js", "App/src/boardList.js"] 
   },
   {
-    "matches": ["http://endoftheinter.net/profile.php*", "https://endoftheinter.net/profile.php*", "http://boards.endoftheinter.net/history.php*", "https://boards.endoftheinter.net/history.php*"],
+    "matches": ["http://endoftheinter.net/profile.php*", "https://endoftheinter.net/profile.php*", "http://boards.endoftheinter.net/history.php*", "https://boards.endoftheinter.net/history.php*",
+                "http://clouds.endoftheinter.net/profile.php*", "https://clouds.endoftheinter.net/profile.php*", "http://boards.clouds.endoftheinter.net/topics/Posted", "https://boards.clouds.endoftheinter.net/topics/Posted"],
     "js": ["App/src/allPages.js", "App/src/profile.js"] 
   },
   {
-    "matches": ["http://endoftheinter.net/userlist.php*", "https://endoftheinter.net/userlist.php*", "http://endoftheinter.net/stats.php*", "https://endoftheinter.net/stats.php*", "http://endoftheinter.net/userpic_queue.php*", "https://endoftheinter.net/userpic_queue.php*"],
+    "matches": ["http://endoftheinter.net/userlist.php*", "https://endoftheinter.net/userlist.php*", "http://endoftheinter.net/stats.php*", "https://endoftheinter.net/stats.php*", "http://endoftheinter.net/userpic_queue.php*", "https://endoftheinter.net/userpic_queue.php*",
+                "http://clouds.endoftheinter.net/userlist.php*", "https://clouds.endoftheinter.net/userlist.php*", "http://clouds.endoftheinter.net/stats.php*", "https://clouds.endoftheinter.net/stats.php*", "http://clouds.endoftheinter.net/userpic_queue.php*", "https://clouds.endoftheinter.net/userpic_queue.php*"],
     "js": ["App/src/allPages.js"]
   }],
   "permissions": [ "tabs", "clipboardWrite", "notifications", "http://*/*", "https://*/*", "contextMenus", "webRequest", "webRequestBlocking", "storage"]

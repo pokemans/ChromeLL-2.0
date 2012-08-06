@@ -635,6 +635,12 @@ span.desc {
 							</div>
                             <div class="checkbox">
 								<label>
+									<input type="checkbox" id="history_menubar" />
+									<span>Add "Message History" link to menubar</span>
+								</label>
+							</div>
+                            <div class="checkbox">
+								<label>
 									<input type="checkbox" id="context_menu" />
 									<span>Show the right click menu (disable/enable extension or restart browser to take effect)</span>
 								</label>
@@ -701,6 +707,12 @@ span.desc {
 								<label>
 									<input type="checkbox" id="sync_userhl" />
 									<span>Sync user highlights</span>
+								</label>							
+							</div>
+                            <div class="checkbox subbox">
+								<label>
+									<input type="checkbox" id="sync_usernotes" />
+									<span>Sync usernotes</span>
 								</label>							
 							</div>
                             <div class="checkbox subbox">
@@ -1276,6 +1288,14 @@ span.desc {
                             Some dramalinks code is based off of an extension by <a href="http://endoftheinter.net/profile.php?user=10347">freeman</a><br />
                             "Load [quoted text omitted] on click" code originally by <a href="http://endoftheinter.net/profile.php?user=10295">headbanger</a><br />
                             Remove unneeded links from the menubar based on code by <a href="http://endoftheinter.net/profile.php?user=5563">citizenray</a>
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Sync</h3>
+                        <div>
+                            <input type="button" value="Force save sync" id="savesync" />
+                            <input type="button" value="Force load sync" id="loadsync" />
+                            <textarea id="fsync_ta" style="width: 90%; height: 100px; border: none;"></textarea>
                         </div>
                     </section>
                     <section>

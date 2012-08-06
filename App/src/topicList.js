@@ -14,7 +14,7 @@ var topicList = {
                 g[i].className = "live_tr";
                 title = g[i].getElementsByTagName('td')[1];
                     for(var f = 0; f < ignores.length; f++){
-                        if(title.getElementsByTagName('a')[0].innerHTML.toLowerCase() == ignores[f]){
+                        if(title.getElementsByTagName('a')[0] && title.getElementsByTagName('a')[0].innerHTML.toLowerCase() == ignores[f]){
                             if(config.debug) console.log('found topic to remove: \"' + g[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0].innerHTML.toLowerCase() + "\" author: " + ignores[f] + " topic: " + i);
                             title.parentNode.style.display = 'none';
                             title.parentNode.className = "hidden_tr";

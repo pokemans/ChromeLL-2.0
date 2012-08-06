@@ -9,28 +9,34 @@ var defaultConfig = '{"float_userbar":false,"short_title":true,"show_secret_boar
 if(localStorage['ChromeLL-Config'] == undefined){
     localStorage['ChromeLL-Config'] = defaultConfig;
 }
-
-cfg = JSON.parse(localStorage['ChromeLL-Config']);
-
 // Set config defaults on upgrade
 function upgradeConfig(){
     var configJS = JSON.parse(defaultConfig);
+    cfg = JSON.parse(localStorage['ChromeLL-Config']);
     for(var i in configJS){
+        //if this variable does not exist, set it to the default
         if(cfg[i] === undefined){
             cfg[i] = configJS[i];
-            console.log("upgrade diff!", i, cfg[i]);
+            if(cfg.debug) console.log("upgrade diff!", i, cfg[i]);
         }
     }
+    
+    //beta versions stored TC cache in the global config. Delete if found
     if(cfg.tcs) delete cfg.tcs
+    
+    //save the config, just in case it was updated
     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
 }
 upgradeConfig();
 
 // sync listener - check every 90s for a config diff
 function chkSync(){
+    setTimeout(chkSync, 90 * 1000);
+    cfg = JSON.parse(localStorage['ChromeLL-Config']);
+    if(!cfg.sync_cfg) return;
     // "split" these config keys from the default config save, 2048 byte limit per item
-    var split = {"user_highlight_data": "sync_userhl", "keyword_highlight_data": "sync_cfg", "post_template_data": "sync_cfg", "ignorator_list": "sync_ignorator", "ignore_keyword_list": "sync_ignorator"};
-    chrome.storage.sync.get('cfg', function(data){
+    // split object moved to allBg.js so it can be accessed from the options page
+    chrome.storage.local.get('cfg', function(data){
         if(data.cfg && data.cfg.last_saved > cfg.last_saved){
             if(cfg.debug) console.log('copy sync to local - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
             for(var j in data.cfg){
@@ -43,7 +49,7 @@ function chkSync(){
                     bSplit.push(k);
                 }
             }
-            chrome.storage.sync.get(bSplit, function(r){
+            chrome.storage.local.get(bSplit, function(r){
                 for(var l in r){
                     if(cfg.debug) console.log('setting local', l, r[l]);
                     cfg[l] = r[l];
@@ -51,26 +57,45 @@ function chkSync(){
                 localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
             });
         }else if(!data.cfg || data.cfg.last_saved < cfg.last_saved){
-            if(cfg.debug) console.log('copy local to sync - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
-            var xCfg = cfg;
+            if(cfg.debug) console.log('copy local to sync - local: ', cfg.last_saved, 'sync: ');
+            var xCfg = JSON.parse(localStorage['ChromeLL-Config']);
             var toSet = {}
             for(var i in split){
                 if(cfg[split[i]]){
-                    toSet[i] = cfg[i];
+                    toSet[i] = xCfg[i];
                 }
                 delete xCfg[i];
             }
-            if(cfg.debug) console.log('setting sync', xCfg);
-            chrome.storage.sync.set({'cfg': xCfg});
+            toSet.cfg = xCfg;
             if(cfg.debug) console.log('setting sync objects', toSet);
-            chrome.storage.sync.set(toSet);
+            chrome.storage.local.set(toSet);
+            for(var i in toSet){
+                var f = function(v){
+                    chrome.storage.local.getBytesInUse(v, function(use){
+                        console.log('%s using %d bytes', v, use);
+                        if(use > 2048){
+                            var sp = Math.ceil(use / 2048);
+                            console.log('%s is too big, splitting into %d parts', v, sp);
+                            var c = 0;
+                            for(var j in toSet[v]){
+                                if(!toSet[v + (c % sp)]) toSet[v + (c % sp)] = {};
+                                toSet[v + (c % sp)][j] = toSet[v][j];
+                                c++;
+                            }
+                            delete toSet[v];
+                            console.log(toSet);
+                        }
+                    });
+                }
+                f(i);
+            }
+            
         }else{
             if(cfg.debug) console.log('skipping sync actions - local: ', cfg.last_saved, 'sync: ', data.cfg.last_saved);
         }
     });
-    setTimeout(chkSync, 90 * 1000);
 }
-chkSync();
+setTimeout(chkSync, 30 * 1000);
 
 if(localStorage['ChromeLL-TCs'] == undefined) localStorage['ChromeLL-TCs'] = "{}";
 
