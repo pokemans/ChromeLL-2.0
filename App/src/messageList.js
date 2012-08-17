@@ -270,7 +270,7 @@ var messageList = {
         insU.value = 'Underline';
         insU.name = 'Underline';
         insU.type = 'button';
-        insU.addEventListener("click", messageListHelper.qpTagButtonn, false);
+        insU.addEventListener("click", messageListHelper.qpTagButton, false);
         insU.id = 'u';
         var insI = document.createElement('input');
         insI.value = 'Italic';
@@ -373,6 +373,24 @@ var messageList = {
 				document.getElementsByClassName('message-top').item(i).innerHTML += ' | <a href="##like' + i + '" onclick="like(this);">Like</a>';
 			}
 		}
+    },
+    hide_deleted: function(){
+        var msgs = document.getElementsByClassName('message-container');
+        for(var i = 0; msgs[i]; i++){
+            if(msgs[i].getElementsByClassName('message-top')[0].getElementsByTagName('em')[0]){
+                msgs[i].getElementsByClassName('message-body')[0].style.display = 'none';
+                var a = document.createElement('a');
+                a.href = '##' + i;
+                a.innerHTML = 'Show Message';
+                a.addEventListener('click', function(evt){
+                    var msg = evt.target.parentNode.parentNode.getElementsByClassName('message-body')[0];
+                    console.log(evt.target);
+                    msg.style.display === 'none' ? msg.style.display = 'block': msg.style.display = 'none';
+                });
+                msgs[i].getElementsByClassName('message-top')[0].innerHTML += ' | ';
+                msgs[i].getElementsByClassName('message-top')[0].insertBefore(a, null);
+            }
+        }
     },
     number_posts: function(){
         var page;
@@ -537,11 +555,11 @@ var messageListHelper = {
         if(!config.tcs) config.tcs = {};
         var tcs = Array();
         var topic = window.location.href.match(/topic=(\d+)/)[1];
-        var board = window.location.href.match(/board=(\d+)/)[1];
         var heads = document.getElementsByClassName('message-top');
         var tc;
-        var haTopic = (board == 444); //Check if HA topic
-        if(haTopic) {
+        var haTopic;
+        if(document.getElementsByClassName('message-top')[0].getElementsByTagName('b')[0].innerHTML.indexOf("\">Human") !== -1) {
+            haTopic = true;
             tc = "human #1";
         }
         else if((!window.location.href.match('page') || window.location.href.match('page=1($|&)')) && !window.location.href.match(/u=(\d+)/))
@@ -605,6 +623,10 @@ var messageListHelper = {
         }
     },
     addNotebox: function(tops){
+        if(!tops[0].getElementsByTagName('a')[0].href.match(/user=(\d+)$/i)){
+            if(config.debug) console.log('HA Topic - skipping usernotes');
+            return;
+        }
         var top;
 		for(var i=0; top = tops[i]; i++){
 			var notebook = document.createElement('a');
@@ -663,9 +685,7 @@ var messageListHelper = {
             numTcs++;
         }
         if(numTcs > max) delete config.tcs[lowestTc];
-        chrome.extension.sendRequest({need:"save", name:"tcs", data:config.tcs}, function(rsp){
-            console.log(rsp);
-        });
+        chrome.extension.sendRequest({need:"save", name:"tcs", data:config.tcs});
     },
     clearUnreadPosts: function(evt){
         if(messageListHelper.hasJustScrolled){

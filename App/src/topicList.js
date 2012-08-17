@@ -187,6 +187,7 @@ var topicList = {
             trs = document.getElementsByClassName('grid')[0].getElementsByTagName('tr');
             var i = 1;
         }
+        console.log(trs);
         while(trs[i]){
             if(i % 2 === 0){
                 for(var j = 0; trs[i].getElementsByTagName('td')[j]; j++){ 

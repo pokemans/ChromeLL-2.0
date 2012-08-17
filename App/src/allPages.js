@@ -1,7 +1,8 @@
 var config = {};
 var allPages = {
     remove_links: function(){
-        var allowed = ["endoftheinter.net", "boards.endoftheinter.net", "wiki.endoftheinter.net", "archives.endoftheinter.net"];
+        if(document.getElementsByClassName('menubar')[0].innerHTML.indexOf('Subscribed') !== -1) return; //disable on clouds
+        var allowed = ["endoftheinter\.net", "boards\.endoftheinter\.net", "wiki\.endoftheinter\.net", "archives\.endoftheinter\.net"];
         var menuSep = " | "
         var menuBar = document.getElementsByClassName("menubar")[0];
         var currentLinks = menuBar.getElementsByTagName("a");
@@ -26,6 +27,22 @@ var allPages = {
             }
             menuBar.appendChild(link);
         }
+    },
+    history_menubar: function(){
+        var link = document.createElement('a');
+        link.innerHTML = 'Message History';
+        var sep = document.createElement('span');
+        sep.innerHTML = ' | ';
+        link.href = '//boards.endoftheinter.net/topics/Posted';
+        document.getElementsByClassName('menubar')[0].insertBefore(link, document.getElementsByClassName('menubar')[0].getElementsByTagName('br')[0]);
+        document.getElementsByClassName('menubar')[0].insertBefore(sep, link);
+        /*
+        else{
+            if(config.sort_history) link.href = '//endoftheinter.net/history.php?b';
+            else link.href = '//endoftheinter.net/history.php';
+            document.getElementsByClassName('menubar')[0].insertBefore(link, null);
+            document.getElementsByClassName('menubar')[0].insertBefore(sep, link);
+        }*/
     },
     float_userbar: function(){
         var id = document.createElement('div');
@@ -96,7 +113,7 @@ var allPages = {
         });
     },
     dramalinks: function(){
-        if(config.hide_dramalinks_topiclist && !window.location.href.match('showtopics')) return;
+        if(config.hide_dramalinks_topiclist && !window.location.href.match(/topics/i)) return;
         commonFunctions.getDrama();
     }
 }
