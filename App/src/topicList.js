@@ -33,6 +33,12 @@ var topicList = {
         }
         topicListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated});
     },
+    append_tags: function(){
+        //if(!config.append_tags) return;
+        for(var i = 0; document.getElementsByClassName('fr').length; i++) {
+            document.getElementsByClassName('fr')[i].className = 'fl';
+        }
+    },
     ignore_keyword: function(){
         if(config.ignore_keyword_list == "" || config.ignore_keyword_list == undefined) return;
         var keywords;

@@ -28,6 +28,10 @@ var allPages = {
             menuBar.appendChild(link);
         }
     },
+    append_tag: function(){
+        //if(typeof(messageList) != 'undefined') return;
+        topicList.append_tags();
+    },
     history_menubar: function(){
         var link = document.createElement('a');
         link.innerHTML = 'Message History';
@@ -363,7 +367,7 @@ var commonFunctions = {
 chrome.extension.sendRequest({need:"config"}, function(response){
     config = response.data;
     for(var i in allPages){
-            if(response.data[i]){
+            if(response.data[i]||i=='append_tag'){
                 try{
                     allPages[i]();
                 }catch(err){
