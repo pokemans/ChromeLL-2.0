@@ -623,20 +623,14 @@ span.desc {
 							</div>
                             <div class="checkbox">
 								<label>
-									<input type="checkbox" id="show_secret_boards" />
-									<span>Show hidden boards in the board list</span>
-								</label>
-							</div>
-                            <div class="checkbox">
-								<label>
-									<input type="checkbox" id="remove_links" />
-									<span>Remove unnecessary links from the menubar</span>
-								</label>
-							</div>
-                            <div class="checkbox">
-								<label>
 									<input type="checkbox" id="history_menubar" />
 									<span>Add "Message History" link to menubar</span>
+								</label>
+							</div>
+                            <div class="checkbox subbox">
+								<label>
+									<input type="checkbox" id="history_menubar_classic" />
+									<span>Go to history.php instead of the Posted tag</span>
 								</label>
 							</div>
                             <div class="checkbox">
@@ -834,6 +828,12 @@ span.desc {
                             </div>
                             <div class="checkbox">
 								<label>
+									<input type="checkbox" id="append_tags" />
+									<span>Move tags to the end of the topic title</span>
+								</label>
+                            </div>
+                            <div class="checkbox">
+								<label>
 									<input type="checkbox" id="ignore_keyword" />
 									<span>Ignore topics matching keywords (comma separated list or JSON array)</span>
 								</label>
@@ -883,6 +883,53 @@ span.desc {
                                         </div>
                                         <div style="float: left; margin-right: 20px;">
 											<input type="text" style="width: 70px;" class="color keyword_color" name="keyword_highlight_color" value="" />
+                                        </div>
+									</div>
+								</div>
+                            </div>
+                            <div class="checkbox">
+								<label>
+									<input type="checkbox" id="enable_tag_highlight" />
+									<span>Highlight topics containing tags below</span>
+								</label>
+                                <br />
+                                <div style="font-size: small!important; margin-left: 17px; margin-top: -10px;">
+									<div class="columns" style="overflow: hidden;">
+										<div style="float: left; width: 257px; margin-right: 20px;">
+											Tags:<br />
+											
+                                        </div>
+                                        <div style="float: left; width: 80px; margin-right: 20px;">
+											Background:<br />
+											
+                                        </div>
+                                        <div style="float: left; width: 70px; margin-right: 20px;">
+											Text:<br />
+											
+										</div>
+									</div>
+								</div>
+                                <div style="font-size: small!important; margin-left: 17px;" id="tag_highlight" >
+									<div class="columns" style="overflow: hidden; display: none;" class="tag_highlight_data_blank">
+										<div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 250px;" class="tag" name="tag_highlight_keyword" value="" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="color tag_bg" name="tag_highlight_bg" value="" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="color tag_color" name="tag_highlight_color" value="" />
+                                        </div>
+									</div>
+                                    <div class="columns tag_highlight_data" style="overflow: hidden;">
+										<div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 250px;" class="tag" name="tag_highlight_keyword" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="color tag_bg" name="tag_highlight_bg" value="" />
+                                        </div>
+                                        <div style="float: left; margin-right: 20px;">
+											<input type="text" style="width: 70px;" class="color tag_color" name="tag_highlight_color" value="" />
                                         </div>
 									</div>
 								</div>

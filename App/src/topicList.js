@@ -89,6 +89,27 @@ var topicList = {
         }
         topicListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated, scope: "topicList"});
     },
+    append_tags: function(){
+        for(var i = 0; i<tags.length; i++) {
+            var tag_children = tags[i].children;
+            for(var j = 0; j<tag_children.length; j++) {
+                if(     tag_children[j].textContent.indexOf('NWS') != -1
+                    ||  tag_children[j].textContent.indexOf('NLS') != -1 ) {
+                        var temp_link = tag_children[j];
+                        tags[i].removeChild(temp_link);
+                        var temp_tag_name = temp_link.textContent;
+                        var text_color = document.createElement("font");
+                        text_color.setAttribute("color","red");
+                        tags[i].previousSibling.appendChild(temp_link);
+                        tags[i].previousSibling.lastChild.textContent = " ";
+                        tags[i].previousSibling.lastChild.appendChild(text_color);
+                        tags[i].previousSibling.lastChild.lastChild.textContent = "   " + temp_tag_name + "";
+                        
+                        
+                }
+            }
+        }
+    },
     page_jump_buttons: function(){
         var trs = topicListHelper.getTopics();
         var insert;
@@ -135,7 +156,7 @@ var topicList = {
         }
         var reg;
         for(var i = 1; topics[i]; i++){
-            title = topics[i].getElementsByTagName('td')[0].getElementsByTagName('a')[0].innerHTML;
+            title = topics[i].getElementsByTagName('td')[0].getElementsByClassName('fl')[0].getElementsByTagName('a')[0].innerHTML;
             for(var j = 0; keys[j]; j++){
                 for(var k = 0; keys[j].match[k]; k++){
                     if(keys[j].match[k].substring(0, 1) == '/'){
@@ -152,6 +173,40 @@ var topicList = {
                             topics[i].getElementsByTagName('td')[0].getElementsByTagName('a')[m].style.color = '#' + keys[j].color;
                         }
                         if(config.debug) console.log('highlight topic ' + title + ' keyword ' + reg);
+                    }
+                }
+            }
+        }
+    },
+    enable_tag_highlight: function(){
+        var topics = topicListHelper.getTopics();
+        var keys = {};
+        for(var j = 0; config.tag_highlight_data[j]; j++){
+                keys[j] = {};
+                keys[j].match = config.tag_highlight_data[j].match.split(',');
+                keys[j].match = topicListHelper.handleCsv(keys[j].match);
+                keys[j].bg = config.tag_highlight_data[j].bg;
+                keys[j].color = config.tag_highlight_data[j].color;
+        }
+        console.log(keys);
+        for(var i = 1; topics[i]; i++){
+            tags = topics[i].getElementsByTagName('td')[0].getElementsByClassName('fr')[0].getElementsByTagName('a');
+            for(var j = 0; tags[j]; j++){
+                for(var k = 0; keys[k]; k++){
+                    for(var l = 0; keys[k].match[l]; l++){
+                        if(tags[j].innerHTML.toLowerCase().match(keys[k].match[l])){
+                            for(var m = 0; topics[i].getElementsByTagName('td')[m]; m++){
+                                if(topics[i].getElementsByTagName('td')[m].style.background == ''){
+                                    topics[i].getElementsByTagName('td')[m].style.background = '#' + keys[k].bg;
+                                    topics[i].getElementsByTagName('td')[m].style.color = '#' + keys[k].color;
+                                    for(var n = 0; topics[i].getElementsByTagName('td')[m].getElementsByTagName('a')[n]; n++){
+                                        topics[i].getElementsByTagName('td')[m].getElementsByTagName('a')[n].style.color = '#' + keys[k].color;
+                                    }
+                                    break;
+                                }
+                            }
+                            if(config.debug) console.log('highlight topic ' + topics[i] + ' tag ' + keys[k].match[l]);
+                        }
                     }
                 }
             }

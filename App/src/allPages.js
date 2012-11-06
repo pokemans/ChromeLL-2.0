@@ -1,37 +1,10 @@
 var config = {};
 var allPages = {
-    remove_links: function(){
-        if(document.getElementsByClassName('menubar')[0].innerHTML.indexOf('Subscribed') !== -1) return; //disable on clouds
-        var allowed = ["endoftheinter\.net", "boards\.endoftheinter\.net", "wiki\.endoftheinter\.net", "archives\.endoftheinter\.net"];
-        var menuSep = " | "
-        var menuBar = document.getElementsByClassName("menubar")[0];
-        var currentLinks = menuBar.getElementsByTagName("a");
-        var newLinks = [];
-        for (var index in currentLinks) {
-            var link = currentLinks[index];
-            for(var i = 0; allowed[i]; i++){
-                var re = new RegExp("^http(s)?:\/\/" + allowed[i] + "(.*)", "i");
-                if (link.href && link.href.match(re)){
-                    newLinks.push(link);
-                }
-            }
-        }
-        while (menuBar.firstChild != null) {
-            menuBar.removeChild(menuBar.firstChild);
-        }
-        for (var index in newLinks){
-            var link = newLinks[index];
-            if (menuBar.firstChild != null) {
-                var textNode = document.createTextNode(menuSep);
-                menuBar.appendChild(document.createTextNode(menuSep))
-            }
-            menuBar.appendChild(link);
-        }
-    },
     history_menubar: function(){
         var link = document.createElement('a');
         link.innerHTML = 'Message History';
-        link.href = '//boards.endoftheinter.net/topics/Posted';
+        if(config.history_menubar_classic) link.href = '//boards.endoftheinter.net/history.php';
+        else link.href = '//boards.endoftheinter.net/topics/Posted';
         if(document.body.className === 'regular'){
             var sep = document.createElement('span');
             sep.innerHTML = ' | ';

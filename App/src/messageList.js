@@ -457,7 +457,12 @@ var messageList = {
         if(!config.no_user_highlight_quotes){
             for(var i = 0; messages[i]; i++){
                 for(var k = 0; messages[i].getElementsByClassName('message-top')[k]; k++){
-                    user = messages[i].getElementsByClassName('message-top')[k].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                    try{
+                        user = messages[i].getElementsByClassName('message-top')[k].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                    }
+                    catch(e){
+                        break;
+                    }
                     if(config.user_highlight_data[user]){
                         if(config.debug) console.log('highlighting post by ' + user);
                         messages[i].getElementsByClassName('message-top')[k].style.background = '#' + config.user_highlight_data[user].bg;
@@ -945,7 +950,12 @@ var messageListLivelinks = {
         if(!config.enable_user_highlight) return;
         if(!config.no_user_highlight_quotes){
             for(var k = 0; el.getElementsByClassName('message-top')[k]; k++){
-                user = el.getElementsByClassName('message-top')[k].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                try{
+                    user = el.getElementsByClassName('message-top')[k].getElementsByTagName('a')[0].innerHTML.toLowerCase();
+                }
+                catch(e){
+                    break;
+                }
                 if(config.user_highlight_data[user]){
                     if(config.debug) console.log('highlighting post by ' + user);
                     el.getElementsByClassName('message-top')[k].style.background = '#' + config.user_highlight_data[user].bg;
