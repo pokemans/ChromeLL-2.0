@@ -699,25 +699,25 @@ span.desc {
                             <span class="beta_info"><b>beta!</b> Make a backup of your config(s) from the about page. Do not sync highlights if you have &gt; 40 highlighted users.</span>
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" id="sync_cfg" />
+									<input type="checkbox" id="sync_cfg" checked="false" disabled="disabled" />
 									<span>Sync configuration with chrome profile</span>
 								</label>							
 							</div>
                             <div class="checkbox subbox">
 								<label>
-									<input type="checkbox" id="sync_userhl" />
+									<input type="checkbox" id="sync_userhl" disabled="disabled" />
 									<span>Sync user highlights</span>
 								</label>							
 							</div>
                             <div class="checkbox subbox">
 								<label>
-									<input type="checkbox" id="sync_usernotes" />
+									<input type="checkbox" id="sync_usernotes" disabled="disabled" />
 									<span>Sync usernotes</span>
 								</label>							
 							</div>
                             <div class="checkbox subbox">
 								<label>
-									<input type="checkbox" id="sync_ignorator" />
+									<input type="checkbox" id="sync_ignorator" disabled="disabled" />
 									<span>Sync ignorator</span>
 								</label>							
 							</div>
@@ -1024,12 +1024,14 @@ span.desc {
                                     <span>Show unread posts in page title</span>
                                 </label>
                             </div>
+                            <!--
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" id="autoscroll_livelinks" />
                                     <span>Automatically scroll down on livelinks post (activate in popup)</span>
                                 </label>
                             </div>
+                            -->
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" id="filter_me" />

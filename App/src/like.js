@@ -2,7 +2,12 @@ function like(el){
 	var e = el.parentNode.parentNode;
     var img = '<img src="http://i4.endoftheinter.net/i/n/f818de60196ad15c888b7f2140a77744/like.png" />';
     var username = document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].innerHTML.replace(/ \((\d+)\)$/, "");
-    var ins = img + ' ' + username + ' likes ' + e.getElementsByTagName('a')[0].innerHTML + '\'s post';
+    var poster = e.getElementsByTagName('a')[0].innerHTML + "'s";
+    if(document.getElementsByTagName('h2')[0].innerHTML.match('Anonymous')){
+        username = "Human";
+        poster = "this";
+    }
+    var ins = img + ' ' + username + ' likes ' + poster + ' post';
     var quickreply = document.getElementsByTagName('textarea')[0];
     var qrtext = quickreply.value;
     var oldtxt = '', newtxt = '';

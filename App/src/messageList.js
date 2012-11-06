@@ -2,9 +2,15 @@ var config = Array();
 var ignorated = {total_ignored: 0, data:{users:{}}};
 var messageList = {
     click_expand_thumbnail: function(){
-        for (var j = 0; j < document.getElementsByClassName('img').length; j++){
-            document.getElementsByClassName('img')[j].addEventListener("click", messageListHelper.expandThumbnail);
-            document.getElementsByClassName('img')[j].getElementsByTagName('a')[0].removeAttribute('href');
+        for (var j = 0; document.getElementsByClassName('imgs')[j]; j++){
+            for(var k = 0; document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k]; k++){
+                if(document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].className === '' && document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].getElementsByTagName('span')[0].style.pixelWidth <= 150){
+                    document.getElementsByClassName('imgs')[j].addEventListener("click", messageListHelper.expandThumbnail);
+                    document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].className = 'thumbnailed_image';
+                    document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].setAttribute('oldHref', document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].href);
+                    document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].removeAttribute('href');
+                }
+            }
         }
     },
     drag_resize_image: function(){
@@ -284,7 +290,7 @@ var messageList = {
         insB.type = 'button';
         insB.addEventListener("click", messageListHelper.qpTagButton, false);
         insB.id = 'b';
-        m.insertBefore(insM, m.getElementsByTagName('br')[0]);
+        m.insertBefore(insM, m.getElementsByTagName('textarea')[0]);
         m.insertBefore(insQ, insM);
         m.insertBefore(insS, insQ);
         m.insertBefore(insP, insS);
@@ -296,11 +302,10 @@ var messageList = {
     filter_me: function(){
         var me = '&u=' + document.getElementsByClassName('userbar')[0].getElementsByTagName('a')[0].href.match(/\?user=([0-9]+)/)[1];
         var txt = 'Filter Me';
-        var board = window.location.href.match(/board=([0-9]+)/)[1];
         var topic = window.location.href.match(/topic=([0-9]+)/)[1];
         var fmh;
         if(window.location.href.indexOf(me) == -1){
-            fmh = window.location.href.split('?')[0] + '?board=' + board + '&topic=' + topic + me;
+            fmh = window.location.href.split('?')[0] + '?topic=' + topic + me;
         }else{
             fmh = window.location.href.replace(me, '');
             txt = 'Unfilter Me';
@@ -377,7 +382,7 @@ var messageList = {
     hide_deleted: function(){
         var msgs = document.getElementsByClassName('message-container');
         for(var i = 0; msgs[i]; i++){
-            if(msgs[i].getElementsByClassName('message-top')[0].getElementsByTagName('em')[0]){
+            if(msgs[i].getElementsByClassName('message-top')[0].getElementsByTagName('em')[0] && msgs[i].getElementsByClassName('message-top')[0].getElementsByTagName('em')[0].innerHTML !== 'Moderator'){
                 msgs[i].getElementsByClassName('message-body')[0].style.display = 'none';
                 var a = document.createElement('a');
                 a.href = '##' + i;
@@ -558,7 +563,7 @@ var messageListHelper = {
         var heads = document.getElementsByClassName('message-top');
         var tc;
         var haTopic;
-        if(document.getElementsByClassName('message-top')[0].getElementsByTagName('b')[0].innerHTML.indexOf("\">Human") !== -1) {
+        if(document.getElementsByClassName('message-top')[0].innerHTML.indexOf("> Human") !== -1) {
             haTopic = true;
             tc = "human #1";
         }
@@ -578,7 +583,7 @@ var messageListHelper = {
         }
         for(var i = 0; i < heads.length; i++){
             if(haTopic && heads[i].innerHTML.indexOf("\">Human") == -1){
-                heads[i].innerHTML = heads[i].innerHTML.replace(/Human #(\d+)/, "<a href=\"#\">Human #$1</a>");
+                heads[i].innerHTML = heads[i].innerHTML.replace(/Human #(\d+)/, "<a href=\"#" + i + "\">Human #$1</a>");
             }
             if(heads[i].getElementsByTagName('a')[0].innerHTML.toLowerCase() == tc){
                 tcs.push(heads[i]);
@@ -607,14 +612,15 @@ var messageListHelper = {
     },
     expandThumbnail: function(evt){
         if(evt.target.tagName != "IMG" && !evt.target.src.match('/i/t/')){
+            if(config.debug) console.log('not expanding');
             return;
         }
         var src = evt.target.src;
-        var ext = evt.target.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('a')[1].innerText;
+        var ext = evt.target.parentNode.parentNode.getAttribute('oldHref');
         var img = document.createElement('img');
-        img.src = src.replace(/(http.*)\/i\/t\/(.*)\/.*/, "$1/i/n/$2/" + ext);
-        evt.target.parentNode.parentNode.parentNode.parentNode.parentNode.insertBefore(img, evt.target.parentNode.parentNode.parentNode.parentNode);
-        evt.target.parentNode.parentNode.parentNode.parentNode.removeChild(evt.target.parentNode.parentNode.parentNode);
+        img.src = src.replace(/(http.*)\/i\/t\/(.*)\/.*/, "$1/i/n/$2/" + ext.substring(ext.lastIndexOf('/') + 1));
+        evt.target.parentNode.parentNode.insertBefore(img, evt.target.parentNode);
+        evt.target.parentNode.parentNode.removeChild(evt.target.parentNode);        
     },
     dragEvent: false,
     dragEventUpdater: function(evt){
@@ -815,10 +821,17 @@ var messageListHelper = {
 }
 var messageListLivelinks = {
     click_expand_thumbnail: function(el){
-        if(el.getElementsByClassName('img')){
-            for (var j = 0; j < el.getElementsByClassName('img').length; j++){
-                el.getElementsByClassName('img')[j].addEventListener("click", messageListHelper.expandThumbnail);
-                el.getElementsByClassName('img')[j].getElementsByTagName('a')[0].removeAttribute('href');
+        if(el.getElementsByClassName('imgs')[0] && el.getElementsByClassName('quoted-message')[0]){
+            var qm = el.getElementsByClassName('quoted-message');
+            for(var i = 0; qm[i]; i++){
+                for (var j = 0; qm[i].getElementsByClassName('imgs')[j]; j++){
+                    if(qm[i].getElementsByClassName('imgs')[j].getElementsByTagName('a')[0].className === ''){
+                        qm[i].getElementsByClassName('imgs')[j].addEventListener("click", messageListHelper.expandThumbnail);
+                        qm[i].getElementsByClassName('imgs')[j].getElementsByTagName('a')[0].className = qm[i].getElementsByClassName('imgs')[j].getElementsByTagName('a')[0].href.match(/imap\/.*\/(.*)$/)[1];
+                        qm[i].getElementsByClassName('imgs')[j].getElementsByTagName('a')[0].removeAttribute('target');
+                        qm[i].getElementsByClassName('imgs')[j].getElementsByTagName('a')[0].removeAttribute('href');
+                    }
+                }
             }
         }
     },
@@ -849,7 +862,7 @@ var messageListLivelinks = {
     user_notes: function(el){
         messageListHelper.addNotebox(el.getElementsByClassName('message-top'));
     },
-    autoscroll_livelinks: function(el){
+    autoscroll_livelinkss: function(el){
         var page = 1;
         if(window.location.href.match('page='))
             page = window.location.href.match(/page=(\d+)/)[1];

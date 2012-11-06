@@ -96,19 +96,19 @@ var topicList = {
         for(var i = 1; trs[i]; i++){
             if(trs[i].getElementsByTagName('td')[0]){
                 insert = document.createElement('span');
-                insert.style.float = 'right';
+                //insert.style.float = 'right';
                 insert.addEventListener('click', topicListHelper.jumpHandlerTopic, false);
                 try{
                     topic = trs[i].getElementsByTagName('td')[0].getElementsByTagName('a');
                     tmp = topic[0].href.match(/(topic|thread)=([0-9]+)/)[2];
                     insert.innerHTML = '<a href="##' + tmp + '" id="jumpWindow">#</a> <a href="##' + tmp + '" id="jumpLast">&gt;</a>';
-                    trs[i].getElementsByTagName('td')[0].insertBefore(insert, null);
+                    trs[i].getElementsByTagName('td')[0].getElementsByClassName('fr')[0].insertBefore(insert, null);
                 }catch(e){
                     if(config.debug) console.log('locked topic?');
                     topic = trs[i].getElementsByTagName('td')[0].getElementsByTagName('span')[0].getElementsByTagName('a');
                     tmp = topic[0].href.match(/(topic|thread)=([0-9]+)/)[2];
                     insert.innerHTML = '<a href="##' + tmp + '" id="jumpWindow">#</a> <a href="##' + tmp + '" id="jumpLast">&gt;</a>';
-                    trs[i].getElementsByTagName('td')[0].insertBefore(insert, null);
+                    trs[i].getElementsByTagName('td')[0].getElementsByClassName('fr')[0].insertBefore(insert, null);
                 }
             }
         }
@@ -187,7 +187,6 @@ var topicList = {
             trs = document.getElementsByClassName('grid')[0].getElementsByTagName('tr');
             var i = 1;
         }
-        console.log(trs);
         while(trs[i]){
             if(i % 2 === 0){
                 for(var j = 0; trs[i].getElementsByTagName('td')[j]; j++){ 
@@ -201,7 +200,7 @@ var topicList = {
 
 var topicListHelper = {
     jumpHandlerTopic: function(ev){
-        var a = ev.srcElement.parentNode.parentNode.parentNode.getElementsByTagName('td')[2]
+        var a = ev.srcElement.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('td')[2]
         var last = Math.ceil(a.innerHTML.split('<')[0] / 50);
         if(ev.srcElement.id == 'jumpWindow'){
             pg = prompt("Page Number (" + last + " total)","Page");
@@ -211,7 +210,7 @@ var topicListHelper = {
         }else{
             pg = last;
         }
-        window.location = ev.srcElement.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].getElementsByTagName('a')[0].href + '&page=' + pg;
+        window.location = ev.srcElement.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].getElementsByTagName('a')[0].href + '&page=' + pg;
     },
     getTopics: function(){
         return document.getElementsByClassName('grid')[0].getElementsByTagName('tr');
@@ -225,6 +224,16 @@ var topicListHelper = {
             ignores[r] = ignores[r].substring(d,ignores[r].length).toLowerCase();;
         }
         return ignores;
+    },
+    chkTags: function(){
+        var atags = document.getElementById('bookmarks').getElementsByTagName('span');
+        var ctags = {};
+        for(var i = 0; atags[i]; i++){
+            if(!atags[i].className){
+                ctags[atags[i].getElementsByTagName('a')[0].innerHTML] = atags[i].getElementsByTagName('a')[0].href;
+            }
+        }
+        console.log(ctags);
     },
     init: function(){
         topicListHelper.globalPort = chrome.extension.connect();
@@ -241,6 +250,7 @@ var topicListHelper = {
                     }
                 }
             }
+            topicListHelper.chkTags();
         });
         topicListHelper.globalPort.onMessage.addListener(function(msg){
             switch(msg.action){

@@ -31,11 +31,17 @@ var allPages = {
     history_menubar: function(){
         var link = document.createElement('a');
         link.innerHTML = 'Message History';
-        var sep = document.createElement('span');
-        sep.innerHTML = ' | ';
         link.href = '//boards.endoftheinter.net/topics/Posted';
-        document.getElementsByClassName('menubar')[0].insertBefore(link, document.getElementsByClassName('menubar')[0].getElementsByTagName('br')[0]);
-        document.getElementsByClassName('menubar')[0].insertBefore(sep, link);
+        if(document.body.className === 'regular'){
+            var sep = document.createElement('span');
+            sep.innerHTML = ' | ';
+            document.getElementsByClassName('menubar')[0].insertBefore(link, document.getElementsByClassName('menubar')[0].getElementsByTagName('br')[0]);
+            document.getElementsByClassName('menubar')[0].insertBefore(sep, link);
+        }else if(document.body.className === 'classic'){
+            var br = document.createElement('br');
+            document.getElementsByClassName('classic3')[0].insertBefore(link, null);
+            document.getElementsByClassName('classic3')[0].insertBefore(br, link);
+        }
         /*
         else{
             if(config.sort_history) link.href = '//endoftheinter.net/history.php?b';
