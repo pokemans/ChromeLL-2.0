@@ -33,6 +33,29 @@ var topicList = {
         }
         topicListHelper.globalPort.postMessage({action: 'ignorator_update', ignorator: ignorated});
     },
+    append_tags: function(){
+        if(!config.append_tags) return;
+        var tags = document.getElementsByClassName('fr');
+        for(var i = 0; i<tags.length; i++) {
+            var tag_children = tags[i].children;
+            for(var j = 0; j<tag_children.length; j++) {
+                if(     tag_children[j].textContent.indexOf('NWS') != -1
+                    ||  tag_children[j].textContent.indexOf('NLS') != -1 ) {
+                        var temp_link = tag_children[j];
+                        tags[i].removeChild(temp_link);
+                        var temp_tag_name = temp_link.textContent;
+                        var text_color = document.createElement("font");
+                        text_color.setAttribute("color","red");
+                        tags[i].previousSibling.appendChild(temp_link);
+                        tags[i].previousSibling.lastChild.textContent = " ";
+                        tags[i].previousSibling.lastChild.appendChild(text_color);
+                        tags[i].previousSibling.lastChild.lastChild.textContent = "   " + temp_tag_name + "";
+                        
+                        
+                }
+            }
+        }
+    },
     ignore_keyword: function(){
         if(config.ignore_keyword_list == "" || config.ignore_keyword_list == undefined) return;
         var keywords;
