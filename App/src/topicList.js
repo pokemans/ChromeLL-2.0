@@ -188,7 +188,6 @@ var topicList = {
                 keys[j].bg = config.tag_highlight_data[j].bg;
                 keys[j].color = config.tag_highlight_data[j].color;
         }
-        console.log(keys);
         for(var i = 1; topics[i]; i++){
             tags = topics[i].getElementsByTagName('td')[0].getElementsByClassName('fr')[0].getElementsByTagName('a');
             for(var j = 0; tags[j]; j++){
@@ -285,10 +284,10 @@ var topicListHelper = {
         var ctags = {};
         for(var i = 0; atags[i]; i++){
             if(!atags[i].className){
-                ctags[atags[i].getElementsByTagName('a')[0].innerHTML] = atags[i].getElementsByTagName('a')[0].href;
+                ctags[atags[i].getElementsByTagName('a')[0].innerHTML] = atags[i].getElementsByTagName('a')[0].href.match('\/topics\/(.*)$')[1];
             }
         }
-        console.log(ctags);
+        chrome.extension.sendRequest({need:"save", name: "saved_tags", data: ctags});
     },
     init: function(){
         topicListHelper.globalPort = chrome.extension.connect();
@@ -305,7 +304,11 @@ var topicListHelper = {
                     }
                 }
             }
-            topicListHelper.chkTags();
+            try{
+                topicListHelper.chkTags();
+            }catch(e){
+                console.log("Error finding tags");
+            }
         });
         topicListHelper.globalPort.onMessage.addListener(function(msg){
             switch(msg.action){
