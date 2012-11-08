@@ -40,9 +40,8 @@ function imageTransloader(info) {
                                         var mimetype = fileGet.getResponseHeader("Content-Type");
 
                                         //build blob
-                                        var bb = new WebKitBlobBuilder();
-                                        bb.append(fileGet.response);
-                                        var blob = bb.getBlob(mimetype);
+                                        var dataview = new DataView(fileGet.response);
+                                        var blob = new Blob([dataview]);
 
                                         //check if gif && > 2MB
                                         if(filesize>(1024*1024*2) && mimetype==="image/gif")
