@@ -4,7 +4,7 @@ var messageList = {
     click_expand_thumbnail: function(){
         for (var j = 0; document.getElementsByClassName('imgs')[j]; j++){
             for(var k = 0; document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k]; k++){
-                if(document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].className === '' && document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].getElementsByTagName('span')[0].style.pixelWidth <= 150){
+                if(document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].className === '' && parseInt(document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].getElementsByTagName('span')[0].style.width) <= 150){
                     document.getElementsByClassName('imgs')[j].addEventListener("click", messageListHelper.expandThumbnail);
                     document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].className = 'thumbnailed_image';
                     document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].setAttribute('oldHref', document.getElementsByClassName('imgs')[j].getElementsByTagName('a')[k].href);
