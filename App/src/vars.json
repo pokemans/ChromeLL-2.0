@@ -1,9 +1,4 @@
 var boards = {"Misc.":{
-                 "Profile":"http://endoftheinter.net/profile.php",
-                 "Message History":"http://boards.endoftheinter.net/topics/Posted",
-                 "Wiki":"http://wiki.endoftheinter.net/index.php/Main_Page",
-                 "Private Messages":"http://endoftheinter.net/inbox.php",
-                 "Board List":"http://boards.endoftheinter.net/boardlist.php",
                  "ChromeLL Options":"%extension%options.html"},
               "Tags":{
                  "Subscribed":"Subscribed",

@@ -102,11 +102,21 @@ if(localStorage['ChromeLL-TCs'] == undefined) localStorage['ChromeLL-TCs'] = "{}
 var app = chrome.app.getDetails();
 if(localStorage['ChromeLL-Version'] != app.version && localStorage['ChromeLL-Version'] != undefined && cfg.sys_notifications){
     console.log('ChromeLL updated! Old v: ' + localStorage['ChromeLL-Version'] + " New v: " + app.version);
-    var notification = webkitNotifications.createNotification(
-                    'Style/images/lueshi_48.png',
-                    "ChromeLL has been updated",
-                    'Old v: ' + localStorage['ChromeLL-Version'] + " New v: " + app.version);
-    notification.show();
+    //updated to chrome.notifications api
+		chrome.notifications.create(
+		    'popup', {
+		        type: "basic",
+		        title: "ChromeLL has been updated",
+		        message: "Old v: " + localStorage['ChromeLL-Version'] + " New v: " + app.version,
+		        iconUrl: "Style/images/lueshi_48.png"
+		    },
+		    function () {}
+		);
+		 //setTimeout needs user configurable option- will add later
+		setTimeout(function () {
+		    //deleted 2nd ; from end of next line
+		    chrome.notifications.clear('popup', function () {});
+		}, 6000);
     localStorage['ChromeLL-Version'] = app.version;
 }
 if(localStorage['ChromeLL-Version'] == undefined){
@@ -270,17 +280,23 @@ chrome.extension.onRequest.addListener(
                     localStorage['ChromeLL-Config'] = JSON.stringify(cfg);
                 }
                 if(cfg.debug) console.log('saving ', request.name, request.data);
-                break;
-            case "notify":
-                var notification = webkitNotifications.createNotification(
-                    'Style/images/lueshi_48.png',
-                    request.title,
-                    request.message);
-                notification.show();
-                if(cfg.close_notifications){
-                    setTimeout(function(){notification.cancel();}, (parseInt(cfg.close_notification_time) * 1000));
-                }
-                break;
+                break;		
+						case "notify":
+						//updated to new chrome.notifications api
+								chrome.notifications.create('popup', {
+								type: "basic",
+								title: request.title,
+								message: request.message,
+								iconUrl: "Style/images/lueshi_48.png"
+								},
+								function () {}
+								);
+						//setTimeout needs user configurable option- will add later
+								setTimeout(function () {
+						//deleted 2nd ; from end of next line
+								chrome.notifications.clear('popup', function () {});
+								}, 6000);
+								break;	
             case "dramalinks":
                 var time = parseInt(new Date().getTime());
                 if(drama.time && (time < drama.time)){

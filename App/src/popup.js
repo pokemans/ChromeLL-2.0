@@ -1,5 +1,6 @@
+//edited to work with tags
 function openBoard(evt){
-    window.open("http://boards.endoftheinter.net/showtopics.php?board=" + document.boards.board.value);
+    window.open("http://boards.endoftheinter.net/" + document.boards.board.value);
 }
 function openOptions(){
     window.open(chrome.extension.getURL('options.html'));
