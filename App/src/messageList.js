@@ -616,16 +616,45 @@ var messageListHelper = {
         return false;
     },
     expandThumbnail: function(evt){
-        if(evt.target.tagName != "IMG" && !evt.target.src.match('/i/t/')){
-            if(config.debug) console.log('not expanding');
-            return;
+    	if (config.debug) console.log("in expandThumbnail");
+         var num_children = evt.target.parentNode.parentNode.childNodes.length;
+        //first time expanding - only span
+        if( num_children == 1) {
+        	if (config.debug) console.log("first time expanding - build span, load img");
+        	
+            //build new span
+            var newspan = document.createElement('span');
+            newspan.setAttribute("class", "img-loaded");
+            newspan.setAttribute("id", evt.target.parentNode.getAttribute('id') + "_expanded");
+            //build new img child for our newspan
+            var newimg = document.createElement('img');
+            //find fullsize image url
+            var fullsize = evt.target.parentNode.parentNode.getAttribute('imgsrc');
+            //set proper protocol
+            if (window.location.protocol == "https:") {
+            	fullsize = fullsize.replace(/^http:/i, "https:");
+            }
+            newimg.src = fullsize;
+            newspan.insertBefore(newimg);
+            evt.target.parentNode.parentNode.insertBefore(newspan, evt.target.parentNode);
+            evt.target.parentNode.style.display="none"; //hide old img	
         }
-        var src = evt.target.src;
-        var ext = evt.target.parentNode.parentNode.getAttribute('oldHref');
-        var img = document.createElement('img');
-        img.src = src.replace(/(http.*)\/i\/t\/(.*)\/.*/, "$1/i/n/$2/" + ext.substring(ext.lastIndexOf('/') + 1));
-        evt.target.parentNode.parentNode.insertBefore(img, evt.target.parentNode);
-        evt.target.parentNode.parentNode.removeChild(evt.target.parentNode);        
+        //has been expanded before - just switch which node is hidden
+        else if (num_children == 2){
+        	if (config.debug) console.log("not first time expanding - toggle display status");
+        	
+        	//toggle their display statuses
+        	var children = evt.target.parentNode.parentNode.childNodes
+        	for(var i = 0; i < children.length; i++){
+        		if( children[i].style.display == "none"){
+        			children[i].style.display = '';
+        		}
+        		else {
+        			children[i].style.display = "none";
+        		}
+        	}
+        }
+        else if(config.debug) console.log("I don't know what's going on with this image - weird number of siblings");
     },
     dragEvent: false,
     dragEventUpdater: function(evt){
