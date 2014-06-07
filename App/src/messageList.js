@@ -770,10 +770,10 @@ var messageListHelper = {
                     case "showIgnorated":
                         if(config.debug) console.log("showing hidden msg", msg.ids);
                         var tr = document.getElementsByClassName('message-top');
-                        for(var i; i = msg.ids.pop();){
-                            console.log(tr[i]);
-                            tr[i].parentNode.style.display = 'block';
-                            tr[i].parentNode.style.opacity = '.7';
+                        for (var i = 0; i < msg.ids.length; i++){
+                            if (config.debug) console.log(tr[msg.ids[i]]);
+                            tr[msg.ids[i]].parentNode.style.display = 'block';
+                            tr[msg.ids[i]].parentNode.style.opacity = '.7';
                         }
                         break;
                     default:
